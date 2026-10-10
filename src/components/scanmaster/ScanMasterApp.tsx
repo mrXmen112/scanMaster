@@ -45,6 +45,16 @@ const PdfEditor = dynamic(() => import('./PdfEditor'), { ssr: false, loading: ()
 const ZipExport = dynamic(() => import('./ZipExport'), { ssr: false, loading: () => <ViewLoader /> })
 const ScanToPdf = dynamic(() => import('./ScanToPdf'), { ssr: false, loading: () => <ViewLoader /> })
 const SplashScreen = dynamic(() => import('./SplashScreen'), { ssr: false })
+// Tools whose screens already existed but were never routed from src/.
+const SmartCrop = dynamic(() => import('./SmartCrop'), { ssr: false, loading: () => <ViewLoader /> })
+const BackgroundCleaner = dynamic(() => import('./BackgroundCleaner'), { ssr: false, loading: () => <ViewLoader /> })
+const ScreenshotEditor = dynamic(() => import('./ScreenshotEditor'), { ssr: false, loading: () => <ViewLoader /> })
+const PasswordProtect = dynamic(() => import('./PasswordProtect'), { ssr: false, loading: () => <ViewLoader /> })
+const PasswordRemove = dynamic(() => import('./PasswordRemove'), { ssr: false, loading: () => <ViewLoader /> })
+const ESignature = dynamic(() => import('./ESignature'), { ssr: false, loading: () => <ViewLoader /> })
+const AiSummary = dynamic(() => import('./AiSummary'), { ssr: false, loading: () => <ViewLoader /> })
+const HandwritingToText = dynamic(() => import('./HandwritingToText'), { ssr: false, loading: () => <ViewLoader /> })
+const BusinessCardScanner = dynamic(() => import('./BusinessCardScanner'), { ssr: false, loading: () => <ViewLoader /> })
 
 export default function ScanMasterApp() {
   const { activeView, setActiveView } = useAppStore()
@@ -171,6 +181,24 @@ export default function ScanMasterApp() {
         return <SpeechToText />
       case 'zip-export':
         return <ZipExport />
+      case 'smart-crop':
+        return <SmartCrop />
+      case 'background-cleaner':
+        return <BackgroundCleaner />
+      case 'screenshot-editor':
+        return <ScreenshotEditor />
+      case 'password-protect':
+        return <PasswordProtect />
+      case 'password-remove':
+        return <PasswordRemove />
+      case 'e-signature':
+        return <ESignature />
+      case 'ai-summary':
+        return <AiSummary />
+      case 'handwriting-to-text':
+        return <HandwritingToText />
+      case 'business-card-scanner':
+        return <BusinessCardScanner />
       default:
         return <Dashboard />
     }

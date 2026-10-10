@@ -10,6 +10,15 @@ import {
   Languages,
   AudioLines,
   Archive,
+  Lock,
+  LockOpen,
+  Signature,
+  Sparkles,
+  Crop,
+  PenLine,
+  Contact,
+  Wand2,
+  MousePointer2,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -134,6 +143,84 @@ export const TOOLS: ToolDefinition[] = [
     description: 'Convert voice into text',
     icon: AudioLines,
     category: 'AI',
+    tone: 'blue',
+  },
+
+  // ── Restored tools ──────────────────────────────────────────────────────
+  // These components have always existed in the repo, but src/ never listed
+  // or routed them, so they were unreachable from the UI. They are wired back
+  // here so the whole built inventory is reachable again. No new tools were
+  // invented - every one of these maps to an existing screen.
+  {
+    id: 'smart-crop',
+    title: 'Smart Crop',
+    description: 'Auto-crop and straighten a photo',
+    icon: Crop,
+    category: 'Scan',
+    tone: 'cyan',
+  },
+  {
+    id: 'background-cleaner',
+    title: 'Background Cleaner',
+    description: 'Clean up document backgrounds',
+    icon: Wand2,
+    category: 'Scan',
+    tone: 'blue',
+  },
+  {
+    id: 'screenshot-editor',
+    title: 'Screenshot Editor',
+    description: 'Markup, blur and redact screenshots',
+    icon: MousePointer2,
+    category: 'Edit',
+    tone: 'cyan',
+  },
+  {
+    id: 'password-protect',
+    title: 'Password Protect PDF',
+    description: 'Encrypt a PDF with a password',
+    icon: Lock,
+    category: 'Edit',
+    tone: 'blue',
+  },
+  {
+    id: 'password-remove',
+    title: 'Remove PDF Password',
+    description: 'Unlock a protected PDF',
+    icon: LockOpen,
+    category: 'Edit',
+    tone: 'cyan',
+  },
+  {
+    id: 'e-signature',
+    title: 'E-Signature',
+    description: 'Draw and place a signature',
+    icon: Signature,
+    category: 'Edit',
+    tone: 'blue',
+  },
+  {
+    id: 'ai-summary',
+    title: 'AI Summary',
+    description: 'Summarise a document with AI',
+    icon: Sparkles,
+    category: 'AI',
+    tone: 'blue',
+  },
+  {
+    id: 'handwriting-to-text',
+    title: 'Handwriting to Text',
+    description: 'Convert handwriting into text',
+    icon: PenLine,
+    category: 'AI',
+    tone: 'cyan',
+  },
+  {
+    id: 'business-card-scanner',
+    title: 'Business Card Scanner',
+    description: 'Scan a card and save the contact',
+    icon: Contact,
+    category: 'Scan',
     tone: 'blue',
   },
 ]

@@ -25,6 +25,16 @@ const viewTitles: Record<ToolView, string> = {
   ocr: 'OCR to Text',
   'speech-to-text': 'Speech to Text',
   'zip-export': 'ZIP Export',
+  'smart-crop': 'Smart Crop',
+  'background-cleaner': 'Background Cleaner',
+  'screenshot-editor': 'Screenshot Editor',
+  'password-protect': 'Password Protect PDF',
+  'password-remove': 'Remove PDF Password',
+  'e-signature': 'E-Signature',
+  'ai-summary': 'AI Summary',
+  'handwriting-to-text': 'Handwriting to Text',
+  'business-card-scanner': 'Business Card Scanner',
+  auth: 'Sign In',
 }
 
 const mainViews: ToolView[] = ['home', 'tools', 'files', 'ai', 'profile']
