@@ -1,0 +1,43 @@
+# ============================================================
+# ScanMaster AI — Supabase Configuration
+# ============================================================
+
+[project]
+id = "sswyiiqyveufsejftgbv"
+name = "ScanMaster AI"
+
+[api]
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+email_double_confirm_changes = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+
+[storage]
+file_size_limit = "50MB"
+
+# ============================================================
+# Storage bucket definitions
+# ============================================================
+
+[[storage.buckets]]
+name = "user-files"
+public = false
+file_size_limit = "50MB"
+allowed_mime_types = ["application/pdf", "image/png", "image/jpeg", "image/webp", "text/plain", "application/zip"]

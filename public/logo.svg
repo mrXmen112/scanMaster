@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0B1B3F"/>
+      <stop offset="100%" style="stop-color:#06102A"/>
+    </linearGradient>
+    <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00D4FF"/>
+      <stop offset="100%" style="stop-color:#0A84FF"/>
+    </linearGradient>
+    <linearGradient id="docGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#E8EDF5"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#06102A" flood-opacity="0.5"/>
+    </filter>
+    <clipPath id="roundedClip">
+      <rect x="16" y="16" width="480" height="480" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="16" y="16" width="480" height="480" rx="112" ry="112" fill="url(#bgGrad)"/>
+  <g clip-path="url(#roundedClip)">
+
+    <!-- Subtle inner glow -->
+    <circle cx="256" cy="200" r="180" fill="#0A84FF" opacity="0.08"/>
+    <circle cx="256" cy="300" r="200" fill="#00D4FF" opacity="0.05"/>
+
+    <!-- Scan corner brackets (cyan) -->
+    <!-- Top-left -->
+    <path d="M128 168 L128 136 Q128 128 136 128 L168 128" fill="none" stroke="#00D4FF" stroke-width="14" stroke-linecap="round"/>
+    <!-- Top-right -->
+    <path d="M384 168 L384 136 Q384 128 376 128 L344 128" fill="none" stroke="#00D4FF" stroke-width="14" stroke-linecap="round"/>
+    <!-- Bottom-left -->
+    <path d="M128 344 L128 376 Q128 384 136 384 L168 384" fill="none" stroke="#00D4FF" stroke-width="14" stroke-linecap="round"/>
+    <!-- Bottom-right -->
+    <path d="M384 344 L384 376 Q384 384 376 384 L344 384" fill="none" stroke="#00D4FF" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- White document symbol -->
+    <g filter="url(#shadow)">
+      <path d="M176 144 L304 144 L336 176 L336 368 L176 368 Z" fill="url(#docGrad)"/>
+      <!-- Document fold -->
+      <path d="M304 144 L304 176 L336 176 Z" fill="#C8D0E0"/>
+    </g>
+
+    <!-- Document text lines -->
+    <rect x="200" y="208" width="88" height="8" rx="4" fill="#B0BEC5"/>
+    <rect x="200" y="228" width="88" height="8" rx="4" fill="#B0BEC5"/>
+    <rect x="200" y="248" width="64" height="8" rx="4" fill="#B0BEC5"/>
+    <rect x="200" y="268" width="76" height="8" rx="4" fill="#B0BEC5"/>
+
+    <!-- S-shaped scan ribbon (electric blue to cyan) -->
+    <path d="M188 308 Q220 290 256 308 Q292 326 324 308" fill="none" stroke="url(#ribbonGrad)" stroke-width="16" stroke-linecap="round" filter="url(#glow)"/>
+
+    <!-- Scan line sweep -->
+    <line x1="168" y1="340" x2="344" y2="340" stroke="#00D4FF" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Sparkle accent -->
+    <g transform="translate(316, 196)">
+      <path d="M0 -12 L3 -3 L12 0 L3 3 L0 12 L-3 3 L-12 0 L-3 -3 Z" fill="#00D4FF" opacity="0.9"/>
+    </g>
+
+    <!-- Small sparkle -->
+    <g transform="translate(168, 320) scale(0.6)">
+      <path d="M0 -12 L3 -3 L12 0 L3 3 L0 12 L-3 3 L-12 0 L-3 -3 Z" fill="#00D4FF" opacity="0.6"/>
+    </g>
+
+  </g>
+</svg>

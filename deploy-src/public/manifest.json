@@ -1,0 +1,57 @@
+{
+  "name": "ScanMaster AI - Premium Document Scanner",
+  "short_name": "ScanMaster AI",
+  "description": "All-in-one mobile document scanner and PDF editor. Create, scan, edit, compress, translate, and manage PDF documents with AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "background_color": "#131324",
+  "theme_color": "#702efd",
+  "categories": ["productivity", "utilities", "business"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan Document",
+      "short_name": "Scan",
+      "description": "Open camera to scan a document",
+      "url": "/?view=scan-to-pdf",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [],
+  "permissions": [
+    "camera"
+  ],
+  "optional_permissions": [
+    "microphone"
+  ]
+}
