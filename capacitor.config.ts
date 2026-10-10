@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'ScanMaster',
   // CRITICAL: Must match Next.js build output directory.
   // With output: 'export', Next.js builds to 'out/'.
-  // Previously 'public' — which only had a static "Loading..." HTML page with zero JS.
+  // Previously 'public' â€” which only had a static "Loading..." HTML page with zero JS.
   webDir: 'out',
   server: {
     cleartext: false,
@@ -20,7 +20,7 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchAutoHide: true,
       launchShowDuration: 0,
-      backgroundColor: '#06102A',
+      backgroundColor: '#0B1B3F',
     },
   },
 };

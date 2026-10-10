@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Base splash drawable.
+
+    This used to be a purple/teal gradient, which fought the ScanMaster navy
+    branding and flashed a light frame on cold start. It is now the brand
+    background with the centred mark, and it also serves as the required base
+    declaration for the per-density drawable-port-*/drawable-land-* variants.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Gradient background matching the icon -->
     <item>
         <shape android:shape="rectangle">
-            <gradient
-                android:startColor="#9B6DD7"
-                android:centerColor="#6B7FD7"
-                android:endColor="#4AAFCC"
-                android:angle="315" />
+            <solid android:color="@color/splashBackground" />
         </shape>
     </item>
-    <!-- Centered Scan Master icon -->
     <item
         android:gravity="center"
         android:width="120dp"

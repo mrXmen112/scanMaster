@@ -837,7 +837,6 @@ export default function ScreenshotEditor() {
         open={showAdGate}
         feature="Screenshot Editor"
         onWatchAd={() => { grantBonusUse('screenshot-editor'); setShowAdGate(false); toast.success('One more use granted!') }}
-        onPremium={() => { setShowAdGate(false); goBack() }}
         onClose={() => setShowAdGate(false)}
       />
     </div>

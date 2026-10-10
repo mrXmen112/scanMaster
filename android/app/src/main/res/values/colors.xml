@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launch background. Must match SPLASH_BG in SplashScreen.tsx and the
+         in-app loading shell so there is no colour change during startup. -->
+    <color name="splashBackground">#0B1B3F</color>
+    <color name="colorPrimary">#0A84FF</color>
+    <color name="colorPrimaryDark">#0B1B3F</color>
+    <color name="colorAccent">#00D4FF</color>
+</resources>

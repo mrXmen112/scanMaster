@@ -54,9 +54,16 @@ export default function TermsConditions() {
         </section>
 
         <section className="space-y-3">
+          <h2 className="text-lg font-bold text-primary">Free to Use</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            ScanMaster is provided free of charge. It contains no paid subscription, no in-app purchases and no billing. Some AI-assisted features have a daily usage limit, which resets automatically each day. You can continue immediately by watching a short advertisement.
+          </p>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="text-lg font-bold text-primary">Advertisements</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            The app may show advertisements through Google AdMob or other advertising networks.
+            The app shows advertisements through Google AdMob and may be supported by ad revenue. Ads are shown to keep the app free. We do not sell your personal data to advertisers, and personalised ads are subject to your device advertising settings and the Google Play Families Policy where applicable.
           </p>
         </section>
 
@@ -82,7 +89,7 @@ export default function TermsConditions() {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-primary">Third-Party Services</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            The app may use third-party services for AI processing, ads, authentication, payments or analytics. These services may have their own terms and policies.
+            The app may use third-party services for AI processing, advertising, authentication and analytics. These services may have their own terms and policies.
           </p>
         </section>
 

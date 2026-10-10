@@ -7,7 +7,7 @@ import type { ToolView } from '@/store/useAppStore'
 import { useServiceWorker } from '@/hooks/use-service-worker'
 import { useErrorHandler } from '@/hooks/use-error-handler'
 import { useAuth } from '@/contexts/AuthContext'
-// Eager imports — needed immediately on initial render
+// Eager imports â€” needed immediately on initial render
 import BottomNav from './BottomNav'
 import Header from './Header'
 import Dashboard from './Dashboard'
@@ -26,12 +26,11 @@ function ViewLoader() {
   )
 }
 
-// Lazy-loaded tool components — reduces initial bundle size
+// Lazy-loaded tool components â€” reduces initial bundle size
 const ToolsPage = dynamic(() => import('./ToolsPage'), { ssr: false, loading: () => <ViewLoader /> })
 const FileManager = dynamic(() => import('./FileManager'), { ssr: false, loading: () => <ViewLoader /> })
 const AiAssistant = dynamic(() => import('./AiAssistant'), { ssr: false, loading: () => <ViewLoader /> })
 const Profile = dynamic(() => import('./Profile'), { ssr: false, loading: () => <ViewLoader /> })
-const PremiumPlan = dynamic(() => import('./PremiumPlan'), { ssr: false, loading: () => <ViewLoader /> })
 const AuthPage = dynamic(() => import('./AuthPage'), { ssr: false, loading: () => <ViewLoader /> })
 const TextToPdf = dynamic(() => import('./TextToPdf'), { ssr: false, loading: () => <ViewLoader /> })
 const ImageToPdf = dynamic(() => import('./ImageToPdf'), { ssr: false, loading: () => <ViewLoader /> })
@@ -61,10 +60,10 @@ export default function ScanMasterApp() {
   const { user, loading: authLoading, configured } = useAuth()
   const [showSplash, setShowSplash] = useState(true)
 
-  // Register PWA service worker — completely non-blocking, errors are silently caught
+  // Register PWA service worker â€” completely non-blocking, errors are silently caught
   useServiceWorker()
 
-  // Global error handler — catches unhandled promise rejections
+  // Global error handler â€” catches unhandled promise rejections
   useErrorHandler()
 
   // Handle deep links from PWA shortcuts (e.g., ?view=scan-to-pdf)
@@ -77,7 +76,7 @@ export default function ScanMasterApp() {
         const validViews: ToolView[] = [
           'home', 'scan-to-pdf', 'image-to-pdf', 'text-to-pdf', 'pdf-editor',
           'compress-pdf', 'merge-pdf', 'split-pdf', 'translate', 'ocr',
-          'speech-to-text', 'zip-export', 'tools', 'files', 'ai', 'profile', 'premium', 'auth',
+          'speech-to-text', 'zip-export', 'tools', 'files', 'ai', 'profile', 'auth',
         ]
         if (validViews.includes(viewParam as ToolView)) {
           setActiveView(viewParam as ToolView)
@@ -86,12 +85,12 @@ export default function ScanMasterApp() {
         window.history.replaceState({}, '', '/')
       }
     } catch {
-      // Deep link parsing failed — ignore, app still works
+      // Deep link parsing failed â€” ignore, app still works
     }
   }, [setActiveView])
 
   // Redirect away from auth view if user is already logged in.
-  // Uses a session-stable ref keyed to the user ID — only redirects once per
+  // Uses a session-stable ref keyed to the user ID â€” only redirects once per
   // user session, even if auth state changes (token refresh, etc.).
   // The ref is NOT reset when navigating away from auth, which prevents
   // re-triggering the redirect loop on every auth state change.
@@ -116,10 +115,10 @@ export default function ScanMasterApp() {
     return <SplashScreen onComplete={() => setShowSplash(false)} />
   }
 
-  // Auth loading state — show a brief loading screen while checking session
+  // Auth loading state â€” show a brief loading screen while checking session
   if (authLoading) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#06102A' }}>
+      <div className="h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#0B1B3F' }}>
         <div className="flex flex-col items-center gap-4">
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center"
@@ -157,8 +156,6 @@ export default function ScanMasterApp() {
         return <AiAssistant />
       case 'profile':
         return <Profile />
-      case 'premium':
-        return <PremiumPlan />
       case 'text-to-pdf':
         return <TextToPdf />
       case 'image-to-pdf':
@@ -226,10 +223,10 @@ export default function ScanMasterApp() {
             </motion.div>
           </AnimatePresence>
         </main>
-        {/* Banner Ad — only shown on home, tools, files, profile screens */}
+        {/* Banner Ad â€” only shown on home, tools, files, profile screens */}
         <BannerAd />
         <BottomNav />
-        {/* Interstitial Ad Overlay — for web mock mode only */}
+        {/* Interstitial Ad Overlay â€” for web mock mode only */}
         <InterstitialAdOverlay />
       </div>
     </ErrorBoundary>

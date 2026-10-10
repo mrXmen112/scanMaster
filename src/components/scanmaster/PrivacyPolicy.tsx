@@ -59,10 +59,15 @@ export default function PrivacyPolicy() {
             </div>
             <div>
               <h3 className="font-semibold text-sm text-foreground">7. Advertising</h3>
-              <p className="text-sm text-muted-foreground mt-1">The app may show advertisements using Google AdMob. AdMob may collect device and advertising data according to Google's advertising policies.</p>
+              <p className="text-sm text-muted-foreground mt-1">The app shows advertisements using Google AdMob. AdMob and its partners may collect device identifiers, advertising data and approximate location in accordance with the Google Privacy Policy and the Google Play Advertising Policies. ScanMaster has no paid features; advertising is what keeps the app free.</p>
             </div>
             <div>
-
+              <h3 className="font-semibold text-sm text-foreground">8. No Payment Data</h3>
+              <p className="text-sm text-muted-foreground mt-1">ScanMaster has no purchases, subscriptions or billing, so we never collect or process card or payment details.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-foreground">9. Permissions Used</h3>
+              <p className="text-sm text-muted-foreground mt-1">Camera (document scanning), Microphone (Speech to Text), and file/photo access (importing and exporting documents). Permissions are requested only at the moment the related feature is used.</p>
             </div>
           </div>
         </section>
@@ -84,7 +89,21 @@ export default function PrivacyPolicy() {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-primary">Data Sharing</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            We do not sell user personal data. Data may be shared only when required to provide app functionality, such as AI processing, authentication, payment processing, analytics, advertising or legal compliance.
+            We do not sell or rent your personal data. Data is shared only with service providers required to operate the app: AI processing providers, authentication providers, advertising networks (Google AdMob) and infrastructure hosts. ScanMaster collects no payment information, because it has no paid features.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-primary">Data Retention and Deletion</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Documents you create stay on your device unless you choose to upload them to your own cloud storage. Scans and images handled by AI features are sent for processing and are not retained by us after the request completes. Account data can be deleted by removing your account or by uninstalling the app.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-primary">Your Rights</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Depending on your country, you may have rights to access, correct, export or delete your personal data, and to object to certain processing. To exercise these rights, contact us using the email below.
           </p>
         </section>
 

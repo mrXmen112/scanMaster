@@ -6,7 +6,6 @@ import {
   Camera,
   ChevronRight,
   File,
-  Crown,
   FilePlus,
   FolderOpen,
   HardDrive,
@@ -205,23 +204,6 @@ export default memo(function Dashboard() {
         </div>
       </div>
 
-      {/* Premium upsell */}
-      <motion.button
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileTap={{ scale: 0.99 }}
-        onClick={() => setActiveView('premium')}
-        className="glass-card-hover flex w-full items-center gap-3 border-primary/25 p-4 text-left"
-      >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-tool-surface">
-          <Crown className="h-5 w-5 text-tool-surface-fg" strokeWidth={1.9} aria-hidden />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-foreground">Upgrade to Premium</p>
-          <p className="text-xs text-muted-foreground">Unlock unlimited tools &amp; AI features</p>
-        </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-      </motion.button>
     </div>
   )
 })

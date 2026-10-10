@@ -13,7 +13,6 @@ const viewTitles: Record<ToolView, string> = {
   files: 'My Files',
   ai: 'AI Assistant',
   profile: 'Profile',
-  premium: 'Premium Plan',
   'text-to-pdf': 'Text to PDF',
   'image-to-pdf': 'Image to PDF',
   'scan-to-pdf': 'Scan to PDF',

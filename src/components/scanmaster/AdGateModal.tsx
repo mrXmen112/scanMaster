@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { X, Crown, Eye, Loader2 } from 'lucide-react'
+import { X, Eye, Loader2, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useRewardedAd } from '@/hooks/use-rewarded-ad'
 import { toast } from 'sonner'
@@ -11,12 +11,24 @@ interface AdGateModalProps {
   open: boolean
   feature: string
   onWatchAd: () => void
-  onPremium: () => void
   onClose: () => void
 }
 
-export default function AdGateModal({ open, feature, onWatchAd, onPremium, onClose }: AdGateModalProps) {
-  const { showRewardedAd, ready: adReady, showing: adShowing } = useRewardedAd()
+/**
+ * Shown when a user reaches the daily limit for an AI-assisted feature.
+ *
+ * ScanMaster is a free app, so there is no paid tier to upsell here. The only
+ * way past the limit is watching a rewarded ad, which is the standard
+ * "rewarded ad for an extra attempt" pattern and is disclosed in the Privacy
+ * Policy and on the Play Store listing.
+ */
+export default function AdGateModal({
+  open,
+  feature,
+  onWatchAd,
+  onClose,
+}: AdGateModalProps) {
+  const { showRewardedAd, showing: adShowing } = useRewardedAd()
   const [loading, setLoading] = useState(false)
 
   if (!open) return null
@@ -31,31 +43,35 @@ export default function AdGateModal({ open, feature, onWatchAd, onPremium, onClo
       } else {
         toast.error('Ad was not completed. No reward granted.')
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to load ad. Try again later.')
     }
     setLoading(false)
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card max-w-sm w-full p-6 rounded-2xl text-center space-y-4 border border-glass-border"
+        className="glass-card relative w-full max-w-sm space-y-4 rounded-2xl border border-glass-border p-6 text-center"
       >
-        <button onClick={onClose} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+        >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="h-14 w-14 rounded-full bg-amber-500/15 flex items-center justify-center mx-auto">
-          <Crown className="h-7 w-7 text-amber-400" />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-tool-surface">
+          <Clock className="h-7 w-7 text-tool-surface-fg" strokeWidth={1.8} aria-hidden />
         </div>
 
         <div>
-          <h3 className="text-base font-bold gradient-text">Daily Limit Reached</h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            You've used all 3 free {feature} attempts today.
+          <h3 className="gradient-text text-base font-bold">Daily Limit Reached</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            You have used today&apos;s free {feature} attempts.
           </p>
         </div>
 
@@ -63,21 +79,26 @@ export default function AdGateModal({ open, feature, onWatchAd, onPremium, onClo
           <Button
             onClick={handleWatchAd}
             disabled={loading || adShowing}
-            className="w-full bg-sky-600 hover:bg-sky-700 text-white h-11 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
-            {loading ? 'Loading Ad...' : 'Watch Rewarded Ad to Continue'}
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            {loading ? 'Loading Ad...' : 'Watch Ad for One More Use'}
           </Button>
           <Button
-            onClick={onPremium}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white h-11 text-xs font-semibold rounded-xl flex items-center justify-center gap-2"
+            onClick={onClose}
+            variant="outline"
+            className="h-11 w-full rounded-xl border-glass-border text-xs font-semibold"
           >
-            <Crown className="h-4 w-4" /> Get Premium — Unlimited Access
+            Come Back Tomorrow
           </Button>
         </div>
 
         <p className="text-[10px] text-muted-foreground">
-          Limit resets daily. Watch a rewarded ad for an extra attempt. Premium removes all limits.
+          Limits reset daily. Watching an ad grants one extra attempt.
         </p>
       </motion.div>
     </div>

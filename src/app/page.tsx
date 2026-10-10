@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { AdProvider } from '@/contexts/AdContext'
 
-// ─── CRITICAL FIX: Load ScanMasterApp with ssr: false ───
+// â”€â”€â”€ CRITICAL FIX: Load ScanMasterApp with ssr: false â”€â”€â”€
 // This prevents the page from needing a serverless function to render.
 // The HTML shell loads instantly (static), then JavaScript hydrates on the client.
 // This eliminates the "PreconditionFailed: function is pending state" error
@@ -19,7 +19,7 @@ const ScanMasterApp = dynamic(
 
 function AppLoadingShell() {
   return (
-    <div className="h-screen flex flex-col items-center justify-center text-white" style={{ backgroundColor: '#06102A' }}>
+    <div className="h-screen flex flex-col items-center justify-center text-white" style={{ backgroundColor: '#0B1B3F' }}>
       <div className="flex flex-col items-center gap-4">
         <div
           className="w-16 h-16 rounded-2xl flex items-center justify-center"

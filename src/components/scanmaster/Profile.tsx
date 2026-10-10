@@ -311,30 +311,6 @@ export default memo(function Profile() {
         </motion.button>
       )}
 
-      {/* Premium Banner */}
-      <motion.button
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
-        onClick={() => setActiveView('premium')}
-        className="w-full glass-card-hover p-4 flex items-center gap-3 border-primary/30"
-      >
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
-          <Crown className="h-6 w-6 text-yellow-400" />
-        </div>
-        <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-foreground">
-            Upgrade to Premium
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Unlimited tools & AI features
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 text-primary" />
-      </motion.button>
-
       {/* Database Setup Section — always visible so users can set up Supabase */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">

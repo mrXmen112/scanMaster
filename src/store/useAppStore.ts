@@ -26,7 +26,6 @@ export type ToolView =
   | 'files'
   | 'ai'
   | 'profile'
-  | 'premium'
   | 'auth'
 
 export type FileCategory = 'recent' | 'scanned' | 'edited' | 'zip' | 'favorites' | 'trash' | 'folders'
@@ -89,7 +88,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     else if (view === 'tools') tab = 'tools'
     else if (view === 'files') tab = 'files'
     else if (view === 'ai') tab = 'ai'
-    else if (view === 'profile' || view === 'premium') tab = 'profile'
+    else if (view === 'profile') tab = 'profile'
     else tab = 'tools'
 
     set({ activeView: view, previousView: current.activeView, activeTab: tab })
@@ -107,7 +106,7 @@ export const useAppStore = create<AppState>((set, get) => ({
                   previousView === 'tools' ? 'tools' :
                   previousView === 'files' ? 'files' :
                   previousView === 'ai' ? 'ai' : 
-                  previousView === 'profile' || previousView === 'premium' ? 'profile' : 'tools'
+                  previousView === 'profile' ? 'profile' : 'tools'
       set({ activeView: previousView, previousView: null, activeTab: tab })
     } else {
       if (activeView === 'home') return // Already home, no-op
