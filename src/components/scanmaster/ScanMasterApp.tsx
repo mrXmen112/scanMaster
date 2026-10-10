@@ -178,9 +178,12 @@ export default function ScanMasterApp() {
 
   return (
     <ErrorBoundary>
-      <div className="h-screen flex flex-col bg-mesh" style={{ backgroundColor: '#06102A' }}>
+      {/* Background comes from bg-mesh / --background so it follows the theme.
+          A hardcoded navy inline style here pinned the whole shell dark and
+          broke Light Mode. */}
+      <div className="h-screen flex flex-col bg-mesh">
         <Header />
-        <main className="flex-1 overflow-y-auto pb-28">
+        <main className="flex-1 overflow-y-auto dock-space">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeView}

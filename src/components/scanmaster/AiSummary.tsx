@@ -78,7 +78,7 @@ function offlineExtractiveSummary(text: string, sentenceCount = 5): string {
   // Tokenize and count word frequencies (ignoring common english and hindi stop words)
   const stopWords = new Set([
     'the', 'and', 'a', 'to', 'of', 'in', 'i', 'is', 'that', 'it', 'on', 'you', 'this', 'for', 'with', 'was', 'as', 'at', 'by', 'an', 'be', 'or', 'are', 'from',
-    'की', 'का', 'के', 'में', 'है', 'हैं', 'और', 'से', 'को', 'यह', 'वह', 'भी', 'पर', 'कर', 'हो', 'तो', 'थी', 'था', 'दिया', 'गया', 'हुआ'
+    'à¤•à¥€', 'à¤•à¤¾', 'à¤•à¥‡', 'à¤®à¥‡à¤‚', 'à¤¹à¥ˆ', 'à¤¹à¥ˆà¤‚', 'à¤”à¤°', 'à¤¸à¥‡', 'à¤•à¥‹', 'à¤¯à¤¹', 'à¤µà¤¹', 'à¤­à¥€', 'à¤ªà¤°', 'à¤•à¤°', 'à¤¹à¥‹', 'à¤¤à¥‹', 'à¤¥à¥€', 'à¤¥à¤¾', 'à¤¦à¤¿à¤¯à¤¾', 'à¤—à¤¯à¤¾', 'à¤¹à¥à¤†'
   ])
 
   const words = text.toLowerCase().match(/\b\w+\b/g) || []
@@ -330,7 +330,7 @@ export default function AiSummary() {
   ]
 
   return (
-    <div className="flex flex-col h-full bg-mesh pb-20">
+    <div className="flex flex-col h-full bg-mesh">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 glass-card rounded-none border-0 border-b border-glass-border shrink-0">
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">

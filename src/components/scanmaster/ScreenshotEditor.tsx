@@ -591,7 +591,7 @@ export default function ScreenshotEditor() {
   ]
 
   return (
-    <div className="flex flex-col h-full bg-mesh pb-20">
+    <div className="flex flex-col h-full bg-mesh">
       <div className="flex items-center gap-3 p-4 glass-card rounded-none border-0 border-b border-glass-border shrink-0">
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />

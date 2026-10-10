@@ -13,6 +13,16 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!--
+            The app owns its own light/dark toggle, which is independent of the
+            system theme. Letting the system paint the status bar produced a
+            light status bar over the dark UI. Pin the system chrome to the
+            ScanMaster navy so it is deliberate in both themes.
+        -->
+        <item name="android:statusBarColor">#071226</item>
+        <item name="android:navigationBarColor">#071226</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <!-- Splash screen theme: shows Scan Master icon + gradient while app loads -->

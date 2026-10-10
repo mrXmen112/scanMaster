@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.getcapacitor.BridgeActivity;
 
 /**
- * MainActivity for ScanMaster AI.
+ * MainActivity for ScanMaster.
  *
  * Overrides default Capacitor BridgeActivity to:
  * 1. Handle camera/microphone permission requests from WebView (getUserMedia)
@@ -44,7 +44,7 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onBackPressed() {
-        // DO NOT call super.onBackPressed() — that would immediately exit the app.
+        // DO NOT call super.onBackPressed() â€” that would immediately exit the app.
         // The JavaScript layer (App.addListener('backButton', ...)) handles all
         // navigation: stack-based view history, double-tap-to-exit on home, etc.
         // When JS decides to exit, it calls CapacitorApp.exitApp() which finishes
@@ -71,7 +71,7 @@ public class MainActivity extends BridgeActivity {
                     ) == PackageManager.PERMISSION_GRANTED;
 
                     if (hasCameraPermission && hasAudioPermission) {
-                        // Already have permissions — grant the WebView request
+                        // Already have permissions â€” grant the WebView request
                         request.grant(request.getResources());
                     } else {
                         // Need to request Android permissions first

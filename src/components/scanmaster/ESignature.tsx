@@ -433,7 +433,7 @@ export default function ESignature() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-mesh pb-20">
+    <div className="flex flex-col h-full bg-mesh">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 glass-card rounded-none border-0 border-b border-glass-border shrink-0">
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
@@ -656,7 +656,7 @@ export default function ESignature() {
                     <PenTool className="h-4 w-4 text-rose-500" /> Draw Signature
                   </h3>
                   <Button variant="ghost" size="icon" onClick={() => setShowSignaturePad(false)} className="h-7 w-7 text-muted-foreground">
-                    ✕
+                    âœ•
                   </Button>
                 </div>
 

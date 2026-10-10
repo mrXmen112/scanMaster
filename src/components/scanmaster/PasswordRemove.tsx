@@ -142,7 +142,7 @@ export default function PasswordRemove() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-mesh pb-20">
+    <div className="flex flex-col h-full bg-mesh">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 glass-card rounded-none border-0 border-b border-glass-border">
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">

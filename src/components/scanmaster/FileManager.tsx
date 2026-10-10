@@ -53,13 +53,11 @@ function getFileIcon(type: StoredFile['type']) {
   }
 }
 
-function getFileIconColor(type: StoredFile['type']) {
-  switch (type) {
-    case 'pdf': return 'bg-red-500/20 text-red-400'
-    case 'image': return 'bg-orange-500/20 text-orange-400'
-    case 'zip': return 'bg-teal-500/20 text-teal-400'
-    case 'text': return 'bg-green-500/20 text-green-400'
-  }
+function getFileIconColor(_type: StoredFile['type']) {
+  // One shared badge treatment for every file type. The glyph (FileText /
+  // Image / Archive / File) carries the distinction, so decorative per-type
+  // colours were only adding noise.
+  return 'bg-tool-surface text-tool-surface-fg'
 }
 
 function formatFileSize(bytes: number) {
@@ -85,7 +83,7 @@ function formatDate(date: Date, mounted: boolean) {
 }
 
 export default memo(function FileManager() {
-  const { files, removeFile, toggleFavorite, renameFile, addFile } = useAppStore()
+  const { files, removeFile, toggleFavorite, renameFile, addFile, setActiveView } = useAppStore()
   const { user, configured } = useAuth()
   const mounted = useMounted()
   const [activeCategory, setActiveCategory] = useState<FileCategory>('recent')

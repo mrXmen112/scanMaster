@@ -47,87 +47,119 @@
   --color-navy-light: var(--navy-light);
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);
+  --color-tool-surface: var(--tool-surface);
+  --color-tool-surface-fg: var(--tool-surface-fg);
+  --color-tool-surface-alt: var(--tool-surface-alt);
+  --color-tool-surface-alt-fg: var(--tool-surface-alt-fg);
+  --color-dock: var(--dock-bg);
+  --color-dock-border: var(--dock-border);
+  --color-nav-inactive: var(--nav-inactive);
 }
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.96 0.008 250);
-  --foreground: oklch(0.17 0.028 260);
-  --card: oklch(0.99 0.004 250 / 95%);
-  --card-foreground: oklch(0.17 0.028 260);
-  --popover: oklch(0.99 0.004 250);
-  --popover-foreground: oklch(0.17 0.028 260);
-  --primary: oklch(0.55 0.2 250);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.92 0.015 250);
-  --secondary-foreground: oklch(0.22 0.04 260);
-  --muted: oklch(0.93 0.01 250);
-  --muted-foreground: oklch(0.42 0.03 260);
-  --accent: oklch(0.55 0.2 250 / 12%);
-  --accent-foreground: oklch(0.35 0.12 250);
-  --destructive: oklch(0.58 0.22 25);
-  --border: oklch(0.82 0.015 250 / 80%);
-  --input: oklch(0.94 0.01 250);
-  --ring: oklch(0.55 0.2 250);
-  --chart-1: oklch(0.55 0.2 250);
-  --chart-2: oklch(0.5 0.16 180);
-  --chart-3: oklch(0.6 0.2 50);
-  --chart-4: oklch(0.48 0.2 310);
-  --chart-5: oklch(0.5 0.18 150);
-  --sidebar: oklch(0.97 0.006 250);
-  --sidebar-foreground: oklch(0.17 0.028 260);
-  --sidebar-primary: oklch(0.55 0.2 250);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.92 0.015 250);
-  --sidebar-accent-foreground: oklch(0.22 0.04 260);
-  --sidebar-border: oklch(0.88 0.015 250 / 80%);
-  --sidebar-ring: oklch(0.55 0.2 250);
-  --electric: oklch(0.55 0.2 250);
-  --electric-foreground: oklch(1 0 0);
-  --navy: oklch(0.17 0.028 260);
-  --navy-light: oklch(0.22 0.035 260);
-  --glass: oklch(0.98 0.006 250 / 85%);
-  --glass-border: oklch(0.80 0.02 250 / 70%);
+
+  /* ── Light Mode: genuinely white, cohesive ── */
+  --background: #ffffff;
+  --foreground: #172033;
+  --card: #ffffff;
+  --card-foreground: #172033;
+  --popover: #ffffff;
+  --popover-foreground: #172033;
+  --primary: #0a84ff;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f9fc;
+  --secondary-foreground: #172033;
+  --muted: #f7f9fc;
+  --muted-foreground: #596579;
+  --accent: rgba(10, 132, 255, 0.1);
+  --accent-foreground: #0a63c4;
+  --destructive: #e5484d;
+  --border: #e5e9f0;
+  --input: #f7f9fc;
+  --ring: #0a84ff;
+  --chart-1: #0a84ff;
+  --chart-2: #00bdeb;
+  --chart-3: #6b7a90;
+  --chart-4: #4a5a70;
+  --chart-5: #93a3b8;
+  --sidebar: #f7f9fc;
+  --sidebar-foreground: #172033;
+  --sidebar-primary: #0a84ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f7f9fc;
+  --sidebar-accent-foreground: #172033;
+  --sidebar-border: #e5e9f0;
+  --sidebar-ring: #0a84ff;
+  --electric: #0a84ff;
+  --electric-foreground: #ffffff;
+  --navy: #0a1a33;
+  --navy-light: #16305a;
+
+  /* Opaque surfaces: a translucent surface let scrolled text bleed through the
+     dock and headers, which is what made Light Mode look broken. */
+  --glass: #ffffff;
+  --glass-border: #e5e9f0;
+
+  /* ── Tool icon system ── */
+  --tool-surface: #eaf2ff;
+  --tool-surface-fg: #0a84ff;
+  --tool-surface-alt: #e2f6fd;
+  --tool-surface-alt-fg: #00a2cf;
+
+  /* ── Bottom dock ── */
+  --dock-bg: #ffffff;
+  --dock-border: #e5e9f0;
+  --nav-inactive: #596579;
 }
 
 .dark {
-  --background: oklch(0.13 0.028 260);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.17 0.035 260 / 60%);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.17 0.035 260);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.7 0.18 250);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.22 0.04 260);
-  --secondary-foreground: oklch(0.9 0 0);
-  --muted: oklch(0.22 0.04 260);
-  --muted-foreground: oklch(0.65 0.02 260);
-  --accent: oklch(0.7 0.18 250 / 20%);
-  --accent-foreground: oklch(0.9 0.1 250);
-  --destructive: oklch(0.65 0.25 25);
-  --border: oklch(0.3 0.04 260 / 50%);
-  --input: oklch(0.25 0.04 260);
-  --ring: oklch(0.7 0.18 250);
-  --chart-1: oklch(0.7 0.18 250);
-  --chart-2: oklch(0.65 0.15 180);
-  --chart-3: oklch(0.75 0.2 50);
-  --chart-4: oklch(0.6 0.2 310);
-  --chart-5: oklch(0.65 0.18 150);
-  --sidebar: oklch(0.15 0.03 260);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.7 0.18 250);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.22 0.04 260);
-  --sidebar-accent-foreground: oklch(0.9 0 0);
-  --sidebar-border: oklch(0.3 0.04 260 / 50%);
-  --sidebar-ring: oklch(0.7 0.18 250);
-  --electric: oklch(0.7 0.18 250);
-  --electric-foreground: oklch(1 0 0);
-  --navy: oklch(0.13 0.028 260);
-  --navy-light: oklch(0.18 0.035 260);
-  --glass: oklch(0.2 0.04 260 / 40%);
-  --glass-border: oklch(0.4 0.08 260 / 30%);
+  --background: #071226;
+  --foreground: #f7faff;
+  --card: #0c1b33;
+  --card-foreground: #f7faff;
+  --popover: #0c1b33;
+  --popover-foreground: #f7faff;
+  --primary: #0a84ff;
+  --primary-foreground: #ffffff;
+  --secondary: #122540;
+  --secondary-foreground: #f7faff;
+  --muted: #122540;
+  --muted-foreground: #b6c3d6;
+  --accent: rgba(10, 132, 255, 0.16);
+  --accent-foreground: #8fc0ff;
+  --destructive: #ff6369;
+  --border: #223956;
+  --input: #122540;
+  --ring: #3d9bff;
+  --chart-1: #0a84ff;
+  --chart-2: #00d4ff;
+  --chart-3: #8fa3bd;
+  --chart-4: #6b819c;
+  --chart-5: #4d6480;
+  --sidebar: #0c1b33;
+  --sidebar-foreground: #f7faff;
+  --sidebar-primary: #0a84ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #122540;
+  --sidebar-accent-foreground: #f7faff;
+  --sidebar-border: #223956;
+  --sidebar-ring: #3d9bff;
+  --electric: #00d4ff;
+  --electric-foreground: #06142a;
+  --navy: #071226;
+  --navy-light: #122540;
+  --glass: #0c1b33;
+  --glass-border: #223956;
+
+  --tool-surface: rgba(10, 132, 255, 0.15);
+  --tool-surface-fg: #58aaff;
+  --tool-surface-alt: rgba(0, 212, 255, 0.13);
+  --tool-surface-alt-fg: #35d6f5;
+
+  --dock-bg: #0c1b33;
+  --dock-border: #223956;
+  --nav-inactive: #b6c3d6;
 }
 
 @layer base {
@@ -139,44 +171,38 @@
   }
 }
 
-/* Glassmorphism utility classes */
+/* Glassmorphism utility classes.
+   Now driven by fully opaque --glass / --glass-border tokens so content
+   scrolling underneath can never bleed through. */
 .glass-card {
   background: var(--glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 1rem;
 }
 
 .glass-card-hover {
   background: var(--glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 1rem;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .glass-card-hover:hover {
-  background: var(--glass);
   border-color: var(--ring);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px oklch(0.55 0.2 250 / 12%);
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.1);
 }
 
 .glass-input {
   background: var(--input);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   color: var(--foreground);
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-input:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 2px oklch(0.55 0.2 250 / 15%);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
   outline: none;
 }
 
@@ -186,35 +212,35 @@
 
 /* Electric glow effects */
 .electric-glow {
-  box-shadow: 0 0 20px oklch(0.55 0.2 250 / 20%),
-    0 0 40px oklch(0.55 0.2 250 / 8%);
+  box-shadow: 0 0 16px rgba(10, 132, 255, 0.22),
+    0 0 32px rgba(10, 132, 255, 0.1);
 }
 
 .dark .electric-glow {
-  box-shadow: 0 0 20px oklch(0.7 0.18 250 / 25%),
-    0 0 40px oklch(0.7 0.18 250 / 10%);
+  box-shadow: 0 0 16px rgba(10, 132, 255, 0.3),
+    0 0 32px rgba(0, 212, 255, 0.12);
 }
 
 .electric-glow-sm {
-  box-shadow: 0 0 10px oklch(0.55 0.2 250 / 15%),
-    0 0 20px oklch(0.55 0.2 250 / 6%);
+  box-shadow: 0 0 8px rgba(10, 132, 255, 0.16),
+    0 0 16px rgba(10, 132, 255, 0.06);
 }
 
 .dark .electric-glow-sm {
-  box-shadow: 0 0 10px oklch(0.7 0.18 250 / 20%),
-    0 0 20px oklch(0.7 0.18 250 / 8%);
+  box-shadow: 0 0 8px rgba(10, 132, 255, 0.24),
+    0 0 16px rgba(0, 212, 255, 0.08);
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, oklch(0.45 0.22 250), oklch(0.5 0.2 200));
+  background: linear-gradient(135deg, #0a84ff 0%, #00bdeb 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, oklch(0.75 0.2 250), oklch(0.65 0.18 200));
+  background: linear-gradient(135deg, #58aaff 0%, #35d6f5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -231,20 +257,20 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.78 0.02 250);
+  background: #c6cfdc;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.65 0.04 250);
+  background: #a9b5c6;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0.05 260);
+  background: #2b4363;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.45 0.08 260);
+  background: #3a587d;
 }
 
 /* Pulse animation for recording */
@@ -288,21 +314,26 @@
   animation: shimmer 1.5s infinite;
 }
 
-/* Background gradient mesh */
+/* Background gradient mesh - subtle in both themes, never a dark navy panel
+   behind white cards in Light Mode. */
 .bg-mesh {
-  background: 
-    radial-gradient(ellipse at 20% 50%, oklch(0.55 0.2 250 / 6%) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, oklch(0.5 0.15 200 / 4%) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, oklch(0.55 0.12 280 / 3%) 0%, transparent 50%),
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(10, 132, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 189, 235, 0.04) 0%, transparent 50%),
     var(--background);
 }
 
 .dark .bg-mesh {
-  background: 
-    radial-gradient(ellipse at 20% 50%, oklch(0.7 0.18 250 / 8%) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, oklch(0.6 0.15 200 / 6%) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, oklch(0.65 0.12 280 / 5%) 0%, transparent 50%),
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(10, 132, 255, 0.09) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.06) 0%, transparent 50%),
     var(--background);
+}
+
+/* Bottom dock spacing: reserve room for the nav + the floating Scan button so
+   no card can ever end up hidden underneath it. */
+.dock-space {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6.75rem);
 }
 
 /* Splash screen animations */

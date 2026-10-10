@@ -2,8 +2,9 @@
 
 import { memo } from 'react'
 import { Home, Wrench, FolderOpen, Camera, User } from 'lucide-react'
-import { useAppStore } from '@/store/useAppStore'
 import { motion } from 'framer-motion'
+
+import { useAppStore } from '@/store/useAppStore'
 
 const tabs = [
   { id: 'home' as const, icon: Home, label: 'Home' },
@@ -15,103 +16,75 @@ const tabs = [
 export default memo(function BottomNav() {
   const { activeTab, setActiveTab, setActiveView } = useAppStore()
 
-  const handleScanClick = () => {
-    setActiveView('scan-to-pdf')
+  const renderTab = (tab: (typeof tabs)[number]) => {
+    const isActive = activeTab === tab.id
+    const Icon = tab.icon
+    return (
+      <button
+        key={tab.id}
+        onClick={() => setActiveTab(tab.id)}
+        aria-label={tab.label}
+        aria-current={isActive ? 'page' : undefined}
+        className="flex min-h-[52px] min-w-[56px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5"
+      >
+        <div className="relative">
+          {isActive && (
+            <motion.span
+              layoutId="navActive"
+              className="absolute -inset-2 rounded-xl bg-accent"
+              transition={{ type: 'spring', duration: 0.35, bounce: 0.15 }}
+            />
+          )}
+          <Icon
+            className={`relative z-10 h-[22px] w-[22px] transition-colors duration-200 ${
+              isActive ? 'text-primary' : 'text-nav-inactive'
+            }`}
+            strokeWidth={isActive ? 2.2 : 1.9}
+            aria-hidden
+          />
+        </div>
+        <span
+          className={`text-[11px] font-medium leading-none transition-colors duration-200 ${
+            isActive ? 'text-primary' : 'text-nav-inactive'
+          }`}
+        >
+          {tab.label}
+        </span>
+      </button>
+    )
   }
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 glass-card rounded-none border-t border-glass-border"
+      aria-label="Primary"
+      // Fully opaque, theme-aware surface. The previous translucent glass let
+      // scrolled tool titles/descriptions show through the dock.
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-dock-border bg-dock"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="flex items-center justify-around px-2 pt-1 pb-1 relative">
-        {tabs.slice(0, 2).map((tab) => {
-          const isActive = activeTab === tab.id
-          const Icon = tab.icon
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-xl transition-all relative min-h-[48px] min-w-[48px]"
-              aria-label={tab.label}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <div className="relative">
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -inset-2 bg-primary/20 rounded-xl"
-                    transition={{ type: 'spring', duration: 0.5, bounce: 0.2 }}
-                  />
-                )}
-                <Icon
-                  className={`h-5 w-5 relative z-10 transition-colors duration-200 ${
-                    isActive ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                />
-              </div>
-              <span
-                className={`text-[10px] font-medium transition-colors duration-200 ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                {tab.label}
-              </span>
-            </button>
-          )
-        })}
+      <div className="grid grid-cols-5 items-center px-1.5 pt-1 pb-1.5">
+        {renderTab(tabs[0])}
+        {renderTab(tabs[1])}
 
-        {/* Central Scan Button */}
-        <div className="relative flex items-center justify-center">
+        {/* Central Scan action */}
+        <div className="flex items-start justify-center">
           <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={handleScanClick}
-            className="relative -mt-6 w-14 h-14 rounded-full flex items-center justify-center text-white z-10"
-            style={{
-              background: 'linear-gradient(135deg, #00D4FF 0%, #0A84FF 100%)',
-              boxShadow: '0 4px 24px rgba(0, 212, 255, 0.4), 0 0 0 4px var(--background)',
-            }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setActiveView('scan-to-pdf')}
             aria-label="Quick Scan"
+            className="-mt-5 flex h-14 w-14 items-center justify-center rounded-full"
+            style={{
+              background: 'linear-gradient(135deg, #0A84FF 0%, #00BDEB 100%)',
+              // Restrained cyan accent ring instead of a large glow halo.
+              boxShadow: '0 4px 14px rgba(10,132,255,0.35), 0 0 0 4px var(--dock-bg)',
+            }}
           >
-            <Camera className="h-6 w-6" />
+            <Camera className="h-6 w-6 text-white" strokeWidth={2} aria-hidden />
           </motion.button>
         </div>
 
-        {tabs.slice(2).map((tab) => {
-          const isActive = activeTab === tab.id
-          const Icon = tab.icon
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-xl transition-all relative min-h-[48px] min-w-[48px]"
-              aria-label={tab.label}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <div className="relative">
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -inset-2 bg-primary/20 rounded-xl"
-                    transition={{ type: 'spring', duration: 0.5, bounce: 0.2 }}
-                  />
-                )}
-                <Icon
-                  className={`h-5 w-5 relative z-10 transition-colors duration-200 ${
-                    isActive ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                />
-              </div>
-              <span
-                className={`text-[10px] font-medium transition-colors duration-200 ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                {tab.label}
-              </span>
-            </button>
-          )
-        })}
+        {renderTab(tabs[2])}
+        {renderTab(tabs[3])}
       </div>
     </nav>
   )
