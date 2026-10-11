@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
+import { toFriendlyAuthError } from '@/lib/auth-errors'
 import { ensureUserProfile, getUserProfile, type UserProfile } from '@/lib/supabase/database'
 import type { User, Session } from '@supabase/supabase-js'
 
@@ -23,7 +24,11 @@ interface AuthState {
   loading: boolean
   configured: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
-  signUp: (email: string, password: string, name?: string) => Promise<{ error: string | null }>
+  signUp: (
+    email: string,
+    password: string,
+    name?: string
+  ) => Promise<{ error: string | null; needsConfirmation?: boolean }>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
 }
@@ -116,16 +121,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!configured) {
       return {
         error:
-          'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file to enable authentication.',
+          'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in your .env.local file to enable authentication.',
       }
     }
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) return { error: error.message }
+      if (error) return { error: toFriendlyAuthError(error).message }
       return { error: null }
     } catch (err) {
-      return { error: (err as Error).message || 'Login failed. Please try again.' }
+      const friendly = toFriendlyAuthError({
+        code: (err as { code?: string })?.code,
+        message: (err as Error)?.message,
+      })
+      return { error: friendly.message }
     }
   }, [configured])
 
@@ -139,16 +148,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const supabase = createClient()
       const { data, error } = await supabase.auth.signUp({ email, password })
-      if (error) return { error: error.message }
+      if (error) return { error: toFriendlyAuthError(error).message }
 
-      // After signup, ensure the user profile exists.
+      // GoTrue returns HTTP 200 and a user object even when "Confirm email" is
+      // enabled in the dashboard — but in that case `session` is null and the
+      // person is NOT signed in. The old code ignored `session` entirely and
+      // returned success, so the UI showed "Account created!" and then left
+      // them staring at the login screen with no explanation. Signing in at
+      // that point fails with email_not_confirmed.
+      //
+      // Reporting needsConfirmation lets the UI say "check your inbox"
+      // instead of claiming success it cannot deliver.
+      if (data.user && !data.session) {
+        return {
+          error: null,
+          needsConfirmation: true,
+        }
+      }
+
+      // A session exists — create the profile row now.
       if (data.user) {
         await ensureUserProfile(data.user.id, email, name)
       }
 
       return { error: null }
     } catch (err) {
-      return { error: (err as Error).message || 'Signup failed. Please try again.' }
+      return { error: toFriendlyAuthError({ message: (err as Error)?.message }).message }
     }
   }, [configured])
 

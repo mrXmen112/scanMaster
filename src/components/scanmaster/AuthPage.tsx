@@ -31,6 +31,7 @@ export default memo(function AuthPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmationSent, setConfirmationSent] = useState<string | null>(null)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -51,7 +52,7 @@ export default memo(function AuthPage() {
 
     setLoading(true)
     try {
-      let result: { error: string | null }
+      let result: { error: string | null; needsConfirmation?: boolean }
       if (mode === 'login') {
         result = await signIn(email.trim(), password)
       } else {
@@ -60,6 +61,13 @@ export default memo(function AuthPage() {
 
       if (result.error) {
         setError(result.error)
+      } else if (result.needsConfirmation) {
+        // "Confirm email" is enabled in the Supabase dashboard, so the account
+        // exists but there is no session yet. Telling the user "Account
+        // created!" here was the bug that made sign-up look broken: the toast
+        // said success, nothing happened, and the person was still on the
+        // login screen. Be explicit about the one step that is left.
+        setConfirmationSent(email.trim())
       } else {
         toast.success(mode === 'login' ? 'Welcome back!' : 'Account created!')
       }
@@ -73,6 +81,65 @@ export default memo(function AuthPage() {
   const switchMode = () => {
     setMode(mode === 'login' ? 'signup' : 'login')
     setError(null)
+  }
+
+  // Shown instead of the form once an account exists but still needs the
+  // emailed link tapped. It replaces the form entirely so nobody sits there
+  // guessing why signing in does not work.
+  if (confirmationSent) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
+        <div className="relative w-full max-w-sm">
+          <button
+            onClick={() => { setConfirmationSent(null); setMode('login') }}
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to sign in
+          </button>
+
+          <div className="glass-card p-6 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-primary/15 flex items-center justify-center mx-auto mb-4">
+              <Mail className="h-7 w-7 text-primary" />
+            </div>
+
+            <h1 className="text-xl font-bold text-foreground mb-2">Check your email</h1>
+            <p className="text-sm text-muted-foreground mb-4">
+              We sent a confirmation link to
+            </p>
+            <p className="text-sm font-semibold text-foreground break-all mb-4">
+              {confirmationSent}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Tap the link in that email to activate your account, then come
+              back and sign in.
+            </p>
+
+            <div className="mt-6 pt-5 border-t border-glass-border space-y-2">
+              <p className="text-xs text-muted-foreground">
+                Nothing arrived? Check your spam folder, or
+              </p>
+              <button
+                onClick={async () => {
+                  setLoading(true)
+                  const { error: resendError } = await signIn(email.trim(), password)
+                  setLoading(false)
+                  if (resendError) {
+                    toast.info('Could not resend right now. Wait a minute and try again.')
+                  } else {
+                    toast.success('Confirmation sent again.')
+                  }
+                }}
+                disabled={loading}
+                className="text-sm text-primary font-medium hover:underline disabled:opacity-50"
+              >
+                {loading ? 'Sending…' : 'Resend the email'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
