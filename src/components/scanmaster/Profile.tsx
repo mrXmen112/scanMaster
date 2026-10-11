@@ -34,6 +34,7 @@ import { useOnlineStatus } from '@/hooks/use-online-status'
 import { useState, useEffect, memo } from 'react'
 import { getSetupStatus, getCachedSetupStatus, type SetupStatus } from '@/lib/setup-status-cache'
 import { DEV_TOOLS_ENABLED } from '@/lib/dev-tools'
+import { appVersion } from '@/lib/app-version'
 import {
   Dialog,
   DialogContent,
@@ -455,7 +456,7 @@ export default memo(function Profile() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground">ScanMaster</p>
-            <p className="text-xs text-muted-foreground">Version 1.0.0</p>
+            <p className="text-xs text-muted-foreground">Version {appVersion}</p>
           </div>
         </div>
       </div>

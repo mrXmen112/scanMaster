@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - ScanMaster</title>
+<meta name="description" content="How ScanMaster collects, uses, stores and protects your data.">
+<style>
+  :root{
+    --navy:#06102A; --navy2:#0B1B3F; --ink:#E8EDF5; --muted:#8FB3D9;
+    --cyan:#00D4FF; --blue:#0A84FF; --line:rgba(143,179,217,.18);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--navy); color:var(--ink);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  header{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  .brand img{width:56px;height:56px;border-radius:14px;display:block}
+  .brand b{font-size:22px;letter-spacing:-.3px}
+  h1{font-size:38px;line-height:1.15;margin:0 0 14px;letter-spacing:-1px;
+     background:linear-gradient(90deg,#fff,#A9C4E4);-webkit-background-clip:text;
+     background-clip:text;color:transparent}
+  .updated{color:var(--muted);font-size:15px;margin:0}
+  main{padding:44px 0 80px}
+  h2{font-size:20px;margin:44px 0 14px;color:var(--cyan);letter-spacing:-.2px}
+  h2:first-of-type{margin-top:0}
+  h3{font-size:16px;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  ul{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:7px}
+  a{color:var(--cyan)}
+  .card{background:rgba(10,132,255,.07);border:1px solid var(--line);
+        border-radius:14px;padding:20px 22px;margin:0 0 20px}
+  .card strong{color:#fff}
+  .tag{display:inline-block;background:rgba(0,212,255,.13);border:1px solid rgba(0,212,255,.3);
+       color:var(--cyan);font-size:12px;font-weight:600;letter-spacing:.4px;
+       text-transform:uppercase;padding:3px 10px;border-radius:999px;margin-bottom:14px}
+  footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--muted);font-size:14px}
+  table{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:15px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.4px}
+  @media(max-width:600px){h1{font-size:30px}header{padding:48px 0 32px}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="brand">
+    <img src="play-icon-512.png" alt="ScanMaster logo">
+    <b>ScanMaster</b>
+  </div>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: <span id="date">1 November 2026</span></p>
+</div></header>
+
+<main><div class="wrap">
+
+  <div class="card">
+    <strong>The short version.</strong> Your documents are processed on your device.
+    We do not read, store, or look at the contents of your files. We store your
+    email address and basic profile details only if you choose to create an account,
+    and we never sell your data.
+  </div>
+
+  <h2>Information We Collect</h2>
+
+  <h3>1. Documents and files</h3>
+  <p>
+    Documents you open, scan, convert or edit are processed locally on your
+    device. They are not uploaded to our servers for the core tools — merging,
+    splitting, compressing, rotating, page extraction and most conversions all
+    run entirely on your phone or tablet.
+  </p>
+  <p>
+    If you explicitly use a feature that requires analysis (for example AI
+    Summary, Handwriting to Text or Business Card Scanner), the specific page
+    you choose to analyse is sent to our AI processor for that request only, as
+    described below. Nothing else is transmitted.
+  </p>
+
+  <h3>2. Camera access</h3>
+  <p>
+    Camera permission is requested only when you start a scan. Images captured
+    stay on your device. We do not receive them unless you deliberately send a
+    page to an AI feature.
+  </p>
+
+  <h3>3. Storage and file access</h3>
+  <p>
+    File access permission lets you pick documents to work on. ScanMaster only
+    reads the files you select and writes output back to a location you choose.
+  </p>
+
+  <h3>4. Account information</h3>
+  <p>If you create an account, we store:</p>
+  <table>
+    <tr><th>Data</th><th>Purpose</th></tr>
+    <tr><td>Email address</td><td>To sign you in and, if you opt in, send service messages</td></tr>
+    <tr><td>Display name</td><td>Shown on your profile</td></tr>
+    <tr><td>Avatar URL</td><td>Shown on your profile, if you use a third-party sign-in</td></tr>
+    <tr><td>User ID</td><td>Internal identifier linking your data to your account</td></tr>
+    <tr><td>Feature usage counters</td><td>To apply free-usage limits and prevent abuse</td></tr>
+  </table>
+  <p>
+    You can use most of ScanMaster without an account. Account data is stored in
+    a Supabase-hosted PostgreSQL database and is protected by Row Level Security,
+    so your rows are only ever visible to your own signed-in account.
+  </p>
+
+  <h3>5. AI processing</h3>
+  <p>
+    AI features route your request through our server to an AI model provider.
+    Only the content you submit for that one request is transmitted. Prompts and
+    responses are not used to train third-party models, and we do not retain a
+    copy after the response is returned to you.
+  </p>
+
+  <h3>6. Usage limits</h3>
+  <p>
+    We track how many AI operations you have used so free limits work. This is a
+    counter only — it contains no information about your documents.
+  </p>
+
+  <h3>7. Advertising</h3>
+  <p>
+    ScanMaster is supported by ads. We use Google AdMob to display them. AdMob
+    may share your advertising identifier and approximate location with Google
+    and its partners to serve and measure ads. We do not receive your name or
+    email from AdMob. You can reset or delete your advertising identifier in
+    your device settings, and in-app purchase removes ads.
+  </p>
+
+  <h3>8. No payment data</h3>
+  <p>
+    Purchases are processed by Google Play. We never see or store your card
+    details, billing address, or payment credentials.
+  </p>
+
+  <h3>9. Permissions used</h3>
+  <table>
+    <tr><th>Permission</th><th>Why</th></tr>
+    <tr><td>Camera</td><td>Scanning documents and photographing business cards</td></tr>
+    <tr><td>Files and storage</td><td>Opening documents you select and saving results</td></tr>
+    <tr><td>Microphone</td><td>Only if you use speech-to-text</td></tr>
+    <tr><td>Notifications</td><td>Optional; only if you enable reminders</td></tr>
+  </table>
+
+  <h2>How We Use Information</h2>
+  <ul>
+    <li>To provide the app's features and keep your account working</li>
+    <li>To apply free-usage limits and prevent automated abuse</li>
+    <li>To serve advertising</li>
+    <li>To diagnose crashes and fix bugs</li>
+    <li>To comply with legal obligations</li>
+  </ul>
+  <p>We do not use your data for advertising profiling or profiling for advertising.</p>
+
+  <h2>Data Sharing</h2>
+  <p>We share data only with the service providers needed to run the app:</p>
+  <ul>
+    <li><strong>Supabase</strong> — database, authentication and file storage</li>
+    <li><strong>Google AdMob</strong> — advertising</li>
+    <li><strong>Google Play</strong> — payments and distribution</li>
+    <li><strong>AI model provider</strong> — only for the single request you submit</li>
+  </ul>
+  <p>
+    We do not sell your personal information. We may disclose data if legally
+    required, such as in response to a valid legal process.
+  </p>
+
+  <h2>Data Retention and Deletion</h2>
+  <ul>
+    <li>Account data is kept while your account exists</li>
+    <li>Deleting your account removes your profile and stored files from our database</li>
+    <li>Documents you process stay on your device and are not retained by us</li>
+    <li>AI request contents are discarded after the response is returned</li>
+  </ul>
+
+  <h2>Your Rights</h2>
+  <p>Depending on where you live, you may have the right to:</p>
+  <ul>
+    <li>Access a copy of your personal data</li>
+    <li>Correct inaccurate data</li>
+    <li>Request deletion of your data</li>
+    <li>Object to or restrict certain processing</li>
+    <li>Withdraw consent for ads</li>
+  </ul>
+  <p>
+    You can delete your account and its data directly in the app under
+    <em>Profile → Delete Account</em>. For anything else, contact us and we will
+    action it within a reasonable time.
+  </p>
+
+  <h2>Data Security</h2>
+  <p>
+    Data is transmitted over TLS. Access to the database is protected by Row
+    Level Security, so each signed-in user can only ever read and write their own
+    rows — not anyone else's. Documents you process never leave your device
+    unless you send one to an AI feature. No system is perfectly secure, but we
+    apply reasonable and appropriate safeguards.
+  </p>
+
+  <h2>Children's Privacy</h2>
+  <p>
+    ScanMaster is not directed at children under 13 (or the equivalent minimum
+    age in your region) and we do not knowingly collect their personal
+    information. If you believe a child has provided us with personal data,
+    contact us and we will delete it.
+  </p>
+
+  <h2>Your Responsibility</h2>
+  <p>
+    You are responsible for the documents you process and for making sure you
+    have the right to use them. Do not use ScanMaster for unlawful material.
+  </p>
+
+  <h2>Changes to This Policy</h2>
+  <p>
+    We may update this policy. If we make a material change we will update the
+    date at the top of this page. Continuing to use ScanMaster after a change
+    means you accept the updated policy.
+  </p>
+
+  <h2>Contact Us</h2>
+  <p>
+    Questions or requests about this policy or your data:<br>
+    <a href="mailto:wahid1874254@gmail.com">wahid1874254@gmail.com</a>
+  </p>
+
+</div></main>
+
+<footer><div class="wrap">
+  ScanMaster &middot; This policy applies to the ScanMaster mobile app for Android.
+</div></footer>
+
+</body>
+</html>
