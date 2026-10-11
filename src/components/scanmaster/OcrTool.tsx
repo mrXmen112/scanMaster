@@ -18,6 +18,7 @@ import {
   Eye,
   X,
 } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
@@ -186,8 +187,9 @@ export default function OcrTool() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <ScanText className="h-5 w-5 text-electric" />
-        <h2 className="text-lg font-semibold gradient-text">OCR - Extract Text</h2>
+        
+        <ToolIcon toolId="ocr" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">OCR - Extract Text</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 safe-bottom">

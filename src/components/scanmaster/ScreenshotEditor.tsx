@@ -3,31 +3,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { Button } from '@/components/ui/button'
-import {
-  ArrowLeft,
-  Image as ImageIcon,
-  Edit,
-  Type,
-  Square,
-  Circle,
-  EyeOff,
-  Trash2,
-  Undo2,
-  Redo2,
-  Loader2,
-  Share2,
-  Download,
-  CheckCircle,
-  ArrowRight,
-  Sparkles,
-  PaintBucket,
-  Move,
-  X,
-  GripHorizontal,
-  Palette,
-  Eraser,
-  MousePointer2
-} from 'lucide-react'
+import { ArrowLeft, Edit, Type, Square, Circle, EyeOff, Trash2, Undo2, Redo2, Loader2, Share2, Download, CheckCircle, ArrowRight, PaintBucket, X, Eraser, MousePointer2, Image as ImageIcon } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { pickImages, downloadFile, shareFile } from '@/lib/capacitor-fs'
@@ -596,8 +573,9 @@ export default function ScreenshotEditor() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <ImageIcon className="h-5 w-5 text-sky-400 animate-pulse" />
-        <h2 className="text-lg font-semibold gradient-text">Screenshot Editor</h2>
+        
+        <ToolIcon toolId="screenshot-editor" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Screenshot Editor</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 max-w-lg mx-auto w-full safe-bottom">

@@ -6,19 +6,8 @@ import { useAppStore } from '@/store/useAppStore'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  ArrowLeft,
-  Bot,
-  FileText,
-  Copy,
-  Check,
-  CheckCircle,
-  Loader2,
-  Share2,
-  Download,
-  WifiOff,
-  Sparkles
-} from 'lucide-react'
+import { ArrowLeft, Bot, FileText, Copy, Check, Loader2, Share2, Download, WifiOff } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { pickSinglePdf, downloadFile, shareFile } from '@/lib/capacitor-fs'
@@ -78,7 +67,7 @@ function offlineExtractiveSummary(text: string, sentenceCount = 5): string {
   // Tokenize and count word frequencies (ignoring common english and hindi stop words)
   const stopWords = new Set([
     'the', 'and', 'a', 'to', 'of', 'in', 'i', 'is', 'that', 'it', 'on', 'you', 'this', 'for', 'with', 'was', 'as', 'at', 'by', 'an', 'be', 'or', 'are', 'from',
-    'à¤•à¥€', 'à¤•à¤¾', 'à¤•à¥‡', 'à¤®à¥‡à¤‚', 'à¤¹à¥ˆ', 'à¤¹à¥ˆà¤‚', 'à¤”à¤°', 'à¤¸à¥‡', 'à¤•à¥‹', 'à¤¯à¤¹', 'à¤µà¤¹', 'à¤­à¥€', 'à¤ªà¤°', 'à¤•à¤°', 'à¤¹à¥‹', 'à¤¤à¥‹', 'à¤¥à¥€', 'à¤¥à¤¾', 'à¤¦à¤¿à¤¯à¤¾', 'à¤—à¤¯à¤¾', 'à¤¹à¥à¤†'
+    'Ã Â¤â€¢Ã Â¥â‚¬', 'Ã Â¤â€¢Ã Â¤Â¾', 'Ã Â¤â€¢Ã Â¥â€¡', 'Ã Â¤Â®Ã Â¥â€¡Ã Â¤â€š', 'Ã Â¤Â¹Ã Â¥Ë†', 'Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€š', 'Ã Â¤â€Ã Â¤Â°', 'Ã Â¤Â¸Ã Â¥â€¡', 'Ã Â¤â€¢Ã Â¥â€¹', 'Ã Â¤Â¯Ã Â¤Â¹', 'Ã Â¤ÂµÃ Â¤Â¹', 'Ã Â¤Â­Ã Â¥â‚¬', 'Ã Â¤ÂªÃ Â¤Â°', 'Ã Â¤â€¢Ã Â¤Â°', 'Ã Â¤Â¹Ã Â¥â€¹', 'Ã Â¤Â¤Ã Â¥â€¹', 'Ã Â¤Â¥Ã Â¥â‚¬', 'Ã Â¤Â¥Ã Â¤Â¾', 'Ã Â¤Â¦Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â¾', 'Ã Â¤â€”Ã Â¤Â¯Ã Â¤Â¾', 'Ã Â¤Â¹Ã Â¥ÂÃ Â¤â€ '
   ])
 
   const words = text.toLowerCase().match(/\b\w+\b/g) || []
@@ -336,8 +325,9 @@ export default function AiSummary() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Bot className="h-5 w-5 text-emerald-400 animate-pulse" />
-        <h2 className="text-lg font-semibold gradient-text">AI Document Summary</h2>
+        
+        <ToolIcon toolId="ai-summary" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">AI Document Summary</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 max-w-lg mx-auto w-full safe-bottom">

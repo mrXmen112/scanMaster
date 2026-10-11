@@ -6,19 +6,8 @@ import { useAppStore } from '@/store/useAppStore'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  ArrowLeft,
-  FileText,
-  FileImage,
-  Copy,
-  Check,
-  CheckCircle,
-  Loader2,
-  Share2,
-  Download,
-  WifiOff,
-  PenTool
-} from 'lucide-react'
+import { ArrowLeft, FileText, FileImage, Copy, Check, Loader2, Share2, Download, WifiOff, PenTool } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { pickImages, downloadFile, shareFile } from '@/lib/capacitor-fs'
@@ -199,8 +188,9 @@ export default function HandwritingToText() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <PenTool className="h-5 w-5 text-violet-400 animate-pulse" />
-        <h2 className="text-lg font-semibold gradient-text">Handwriting to Text</h2>
+        
+        <ToolIcon toolId="handwriting-to-text" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Handwriting to Text</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 max-w-lg mx-auto w-full safe-bottom">

@@ -49,12 +49,13 @@ import {
   GripVertical,
   PenTool,
 } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type ToolMode = 'select' | 'text' | 'pen' | 'highlighter' | 'eraser' | 'image' | 'signature' | 'shape'
 
@@ -142,7 +143,7 @@ interface HistorySnapshot {
   pages: PageInfo[]
 }
 
-// ─── Utilities ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function genId(): string {
   return crypto.randomUUID()
@@ -179,13 +180,13 @@ const PRESET_COLORS = [
   '#22c55e', '#06b6d4', '#3b82f6', '#a855f7', '#ec4899',
 ]
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function PdfEditor() {
   const { goBack, addFile } = useAppStore()
   const { showAdAfterSuccess } = useInterstitialAd()
 
-  // ── Core state ──
+  // â”€â”€ Core state â”€â”€
   const [file, setFile] = useState<File | null>(null)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [pages, setPages] = useState<PageInfo[]>([])
@@ -194,7 +195,7 @@ export default function PdfEditor() {
   const [saving, setSaving] = useState(false)
   const [dragOver, setDragOver] = useState(false)
 
-  // ── Tools ──
+  // â”€â”€ Tools â”€â”€
   const [activeTool, setActiveTool] = useState<ToolMode>('select')
   const [strokeColor, setStrokeColor] = useState('#ffffff')
   const [strokeWidth, setStrokeWidth] = useState(3)
@@ -204,50 +205,50 @@ export default function PdfEditor() {
   const [shapeType, setShapeType] = useState<ShapeType>('rectangle')
   const [highlightColor, setHighlightColor] = useState('#eab308')
 
-  // ── Annotations ──
+  // â”€â”€ Annotations â”€â”€
   const [annotations, setAnnotations] = useState<Annotation[]>([])
   const [undoStack, setUndoStack] = useState<HistorySnapshot[]>([])
   const [redoStack, setRedoStack] = useState<HistorySnapshot[]>([])
 
-  // ── Drawing state ──
+  // â”€â”€ Drawing state â”€â”€
   const [isDrawing, setIsDrawing] = useState(false)
   const currentStrokeRef = useRef<Point[]>([])
   const drawStartRef = useRef<Point | null>(null)
 
-  // ── Text placement ──
+  // â”€â”€ Text placement â”€â”€
   const [placingText, setPlacingText] = useState(false)
   const [textPlacePos, setTextPlacePos] = useState<Point | null>(null)
   const textInputRef = useRef<HTMLInputElement | null>(null)
 
-  // ── Signature pad ──
+  // â”€â”€ Signature pad â”€â”€
   const [showSignaturePad, setShowSignaturePad] = useState(false)
   const sigCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const [sigDrawing, setSigDrawing] = useState(false)
   const sigStrokesRef = useRef<Point[]>([])
 
-  // ── Image stamp ──
+  // â”€â”€ Image stamp â”€â”€
   const imageInputRef = useRef<HTMLInputElement | null>(null)
 
-  // ── UI ──
+  // â”€â”€ UI â”€â”€
   const [zoom, setZoom] = useState(100)
   const [showThumbnails, setShowThumbnails] = useState(true)
   const [showPreview, setShowPreview] = useState(false)
 
-  // ── Refs ──
+  // â”€â”€ Refs â”€â”€
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const pageContainerRef = useRef<HTMLDivElement | null>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
-  // ── Derived ──
+  // â”€â”€ Derived â”€â”€
   const pageAnnotations = useMemo(
     () => annotations.filter((a) => a.page === currentPage),
     [annotations, currentPage]
   )
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // HISTORY (undo / redo)
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const pushHistory = useCallback(() => {
     setUndoStack((prev) => [
@@ -283,9 +284,9 @@ export default function PdfEditor() {
     toast.info('Redo')
   }, [redoStack, annotations, pages])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // PDF LOADING
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const loadPdf = useCallback(async (pdfFile: File) => {
     if (loading) return
@@ -354,9 +355,9 @@ export default function PdfEditor() {
     [loadPdf]
   )
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // PAGE MANAGEMENT
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const rotatePage = useCallback(
     (pageIndex: number) => {
@@ -415,9 +416,9 @@ export default function PdfEditor() {
     }
   }, [pdfUrl])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // SIGNATURE PAD (defined early so the useEffect below can reference it)
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const initSigCanvas = useCallback(() => {
     const canvas = sigCanvasRef.current
@@ -443,9 +444,9 @@ export default function PdfEditor() {
     }
   }, [showSignaturePad, initSigCanvas])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CANVAS RENDERING
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current
@@ -578,9 +579,9 @@ export default function PdfEditor() {
     return () => window.removeEventListener('resize', handleResize)
   }, [redrawCanvas])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POINTER HANDLERS (canvas overlay)
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const getCanvasPoint = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>): Point => {
@@ -735,9 +736,9 @@ export default function PdfEditor() {
     [isDrawing, activeTool, getCanvasPoint, currentPage, pushHistory, strokeColor, strokeWidth, highlightColor, shapeType]
   )
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // TEXT PLACEMENT
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const confirmText = useCallback(() => {
     if (!textValue.trim() || !textPlacePos) return
@@ -767,9 +768,9 @@ export default function PdfEditor() {
     setTextPlacePos(null)
   }, [])
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // SIGNATURE PAD (handlers only — initSigCanvas defined above near useEffect)
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // SIGNATURE PAD (handlers only â€” initSigCanvas defined above near useEffect)
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleSigPointerDown = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -842,9 +843,9 @@ export default function PdfEditor() {
     toast.success('Signature placed')
   }, [currentPage, pushHistory])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // IMAGE STAMP
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleImageSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -873,9 +874,9 @@ export default function PdfEditor() {
     [currentPage, pushHistory]
   )
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // HIGHLIGHT TOOL (drag to create)
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   // Highlight is handled through the drawing system above, using 'highlighter' mode
   // which creates thicker, semi-transparent strokes
@@ -895,12 +896,12 @@ export default function PdfEditor() {
         color: highlightColor,
       },
     ])
-    toast.success('Highlight added — drag to resize')
+    toast.success('Highlight added â€” drag to resize')
   }, [currentPage, highlightColor, pushHistory])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // SAVE / EXPORT
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleSave = useCallback(async () => {
     if (saving) return
@@ -1040,9 +1041,9 @@ export default function PdfEditor() {
     setActiveTool('select')
   }, [pdfUrl])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CURSOR FOR ACTIVE TOOL
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const getCursor = useCallback((): string => {
     switch (activeTool) {
@@ -1065,9 +1066,9 @@ export default function PdfEditor() {
     }
   }, [activeTool])
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // TOOL DEFINITIONS
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const tools: { id: ToolMode; icon: React.ReactNode; label: string }[] = [
     { id: 'select', icon: <MousePointer2 className="h-4 w-4" />, label: 'Select' },
@@ -1080,9 +1081,9 @@ export default function PdfEditor() {
     { id: 'signature', icon: <PenTool className="h-4 w-4" />, label: 'Signature' },
   ]
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // RENDER — Upload Zone
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // RENDER â€” Upload Zone
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   if (!file) {
     return (
@@ -1096,8 +1097,9 @@ export default function PdfEditor() {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <FileText className="h-5 w-5 text-electric" />
-          <h2 className="text-lg font-semibold gradient-text">PDF Editor</h2>
+          
+        <ToolIcon toolId="pdf-editor" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">PDF Editor</h2>
         </div>
 
         <div className="flex-1 flex items-center justify-center p-4">
@@ -1147,9 +1149,9 @@ export default function PdfEditor() {
     )
   }
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // RENDER — Editor
-  // ────────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // RENDER â€” Editor
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const pageAspect =
     pages[currentPage]?.width && pages[currentPage]?.height
@@ -1160,7 +1162,7 @@ export default function PdfEditor() {
 
   return (
     <div className="flex flex-col h-full bg-mesh">
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div className="flex items-center justify-between gap-3 p-3 glass-card rounded-none border-0 border-b border-glass-border">
         <div className="flex items-center gap-2">
           <Button
@@ -1264,7 +1266,7 @@ export default function PdfEditor() {
         </div>
       </div>
 
-      {/* ── Toolbar ── */}
+      {/* â”€â”€ Toolbar â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1345,7 +1347,7 @@ export default function PdfEditor() {
         </div>
       </motion.div>
 
-      {/* ── Tool Options Bar ── */}
+      {/* â”€â”€ Tool Options Bar â”€â”€ */}
       <AnimatePresence>
         {(activeTool === 'text' ||
           activeTool === 'shape' ||
@@ -1447,7 +1449,7 @@ export default function PdfEditor() {
         )}
       </AnimatePresence>
 
-      {/* ── Main Content Area ── */}
+      {/* â”€â”€ Main Content Area â”€â”€ */}
       <div className="flex-1 flex overflow-hidden">
         {/* Page Thumbnails Sidebar */}
         <AnimatePresence>
@@ -1497,7 +1499,7 @@ export default function PdfEditor() {
           )}
         </AnimatePresence>
 
-        {/* Center — Page Display */}
+        {/* Center â€” Page Display */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Zoom Controls */}
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-glass-border/50">
@@ -1535,7 +1537,7 @@ export default function PdfEditor() {
             <span className="text-xs text-muted-foreground">
               {currentPage + 1} / {pages.length}
               {annotations.filter((a) => a.page === currentPage).length > 0 &&
-                ` · ${annotations.filter((a) => a.page === currentPage).length} annotations`}
+                ` Â· ${annotations.filter((a) => a.page === currentPage).length} annotations`}
             </span>
           </div>
 
@@ -1552,7 +1554,7 @@ export default function PdfEditor() {
                 maxWidth: '100%',
               }}
             >
-              {/* PDF Content — iframe for actual PDF rendering */}
+              {/* PDF Content â€” iframe for actual PDF rendering */}
               {pdfUrl && !showPreview && (
                 <iframe
                   ref={iframeRef}
@@ -1565,7 +1567,7 @@ export default function PdfEditor() {
                 />
               )}
 
-              {/* Preview mode — full PDF viewer */}
+              {/* Preview mode â€” full PDF viewer */}
               {pdfUrl && showPreview && (
                 <iframe
                   src={`${pdfUrl}#page=${currentPage + 1}`}
@@ -1710,7 +1712,7 @@ export default function PdfEditor() {
         </div>
       </div>
 
-      {/* ── Bottom Action Bar ── */}
+      {/* â”€â”€ Bottom Action Bar â”€â”€ */}
       <div className="glass-card rounded-none border-0 border-t border-glass-border p-2">
         <div className="flex items-center gap-2 max-w-lg mx-auto">
           <Button
@@ -1751,7 +1753,7 @@ export default function PdfEditor() {
         </div>
       </div>
 
-      {/* ── Signature Pad Dialog ── */}
+      {/* â”€â”€ Signature Pad Dialog â”€â”€ */}
       <Dialog open={showSignaturePad} onOpenChange={setShowSignaturePad}>
         <DialogContent className="glass-card sm:max-w-md">
           <DialogHeader>

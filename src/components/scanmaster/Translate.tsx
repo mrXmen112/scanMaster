@@ -15,6 +15,7 @@ import {
   Download,
   Loader2,
 } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
@@ -115,7 +116,7 @@ export default function Translate() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: `Translation: ${sourceName} → ${targetName}`,
+          title: `Translation: ${sourceName} â†’ ${targetName}`,
           text: translatedText,
           fontSize: 12,
           alignment: 'left',
@@ -167,8 +168,9 @@ export default function Translate() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Languages className="h-5 w-5 text-indigo-400" />
-        <h2 className="text-lg font-semibold gradient-text">Translate</h2>
+        
+        <ToolIcon toolId="translate" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Translate</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 safe-bottom">

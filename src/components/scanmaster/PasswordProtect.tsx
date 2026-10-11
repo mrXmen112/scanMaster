@@ -5,18 +5,8 @@ import { useAppStore } from '@/store/useAppStore'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import {
-  ArrowLeft,
-  Lock,
-  FileText,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Loader2,
-  Share2,
-  Download,
-  AlertCircle
-} from 'lucide-react'
+import { ArrowLeft, Lock, FileText, CheckCircle, Eye, EyeOff, Loader2, Share2, Download } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { pickSinglePdf, downloadFile, shareFile } from '@/lib/capacitor-fs'
@@ -135,8 +125,9 @@ export default function PasswordProtect() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Lock className="h-5 w-5 text-red-500 animate-pulse" />
-        <h2 className="text-lg font-semibold gradient-text">Password Protect</h2>
+        
+        <ToolIcon toolId="password-protect" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Password Protect</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-5 safe-bottom max-w-lg mx-auto w-full">

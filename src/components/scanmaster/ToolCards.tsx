@@ -1,59 +1,37 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import type { ElementType } from 'react'
+import { SearchX } from 'lucide-react'
 
 import type { ToolDefinition } from '@/lib/tools'
+import ToolIcon from './ToolIconTile'
 
-type Size = 'sm' | 'md' | 'lg'
-
-const CONTAINER: Record<Size, string> = {
-  sm: 'h-9 w-9 rounded-lg',
-  md: 'h-11 w-11 rounded-xl',
-  lg: 'h-12 w-12 rounded-xl',
-}
-
-const GLYPH: Record<Size, string> = {
-  sm: 'h-[18px] w-[18px]',
-  md: 'h-[22px] w-[22px]',
-  lg: 'h-[24px] w-[24px]',
-}
-
-function toneClass(tone: ToolDefinition['tone']): string {
-  return tone === 'cyan'
-    ? 'bg-tool-surface-alt text-tool-surface-alt-fg'
-    : 'bg-tool-surface text-tool-surface-fg'
-}
+export { ToolIcon }
+export default ToolIcon
 
 /**
- * The one place a tool icon is rendered.
+ * Tile wrappers around the shared <ToolIcon>.
  *
- * Every tool card in the app (Home grid, Home featured rail, Tools list,
- * search results) routes through this component, so icon size, stroke weight,
- * corner radius and palette are identical everywhere. Colours come from theme
- * tokens, which means light and dark are both correct with no per-screen
- * overrides.
+ * These keep layout/animation concerns separate from the artwork so every tool
+ * surface looks and behaves identically. The tile supplies its own colour and
+ * rounded corners, so nothing here paints a background or a circular mask.
  */
-export function ToolIcon({
-  tool,
-  size = 'md',
+
+export function ToolTile({
+  toolId,
+  size = 'lg',
+  className = '',
+  title,
 }: {
-  tool: ToolDefinition
-  size?: Size
+  toolId: string
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  className?: string
+  title?: string
 }) {
-  const Icon = tool.icon
-  return (
-    <div
-      className={`${CONTAINER[size]} ${toneClass(tool.tone)} flex items-center justify-center shrink-0`}
-    >
-      <Icon className={GLYPH[size]} strokeWidth={1.9} aria-hidden />
-    </div>
-  )
+  return <ToolIcon toolId={toolId} size={size} className={className} title={title} />
 }
 
-/**
- * Grid-style tool card used on Home and anywhere else a compact tile is shown.
- */
+/** Grid-style tool card used on Home. */
 export function ToolCard({
   tool,
   onSelect,
@@ -73,7 +51,7 @@ export function ToolCard({
       className="glass-card-hover flex flex-col items-center gap-2.5 p-3.5 text-center"
       aria-label={tool.title}
     >
-      <ToolIcon tool={tool} size="md" />
+      <ToolTile toolId={tool.id} size="lg" />
       <div className="min-w-0 w-full">
         <p className="truncate text-sm font-medium text-foreground">{tool.title}</p>
         <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground line-clamp-2">
@@ -84,9 +62,7 @@ export function ToolCard({
   )
 }
 
-/**
- * Row-style tool card used by the Tools screen and search results.
- */
+/** Row-style tool card used by the Tools directory and search results. */
 export function ToolRow({
   tool,
   onSelect,
@@ -103,7 +79,7 @@ export function ToolRow({
       className="glass-card-hover flex w-full items-center gap-3 p-3 text-left"
       aria-label={tool.title}
     >
-      <ToolIcon tool={tool} size="md" />
+      <ToolTile toolId={tool.id} size="md" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-foreground">{tool.title}</p>
         <p className="text-xs leading-snug text-muted-foreground">{tool.description}</p>
@@ -120,7 +96,7 @@ export function ToolEmptyState({
 }: {
   title: string
   subtitle: string
-  icon: ElementType
+  icon: React.ElementType
 }) {
   return (
     <div className="glass-card p-8 text-center">
@@ -132,3 +108,6 @@ export function ToolEmptyState({
     </div>
   )
 }
+
+/** Named export so search-result lists can import it directly. */
+export { SearchX }

@@ -20,7 +20,7 @@ import {
   FEATURED_TOOLS,
   APP_NAME,
 } from '@/lib/tools'
-import { ToolCard, ToolIcon } from './ToolIcon'
+import { ToolCard, ToolTile } from './ToolCards'
 
 export default memo(function Dashboard() {
   const { setActiveView, files = [] } = useAppStore()
@@ -90,7 +90,7 @@ export default memo(function Dashboard() {
         <ChevronRight className="h-5 w-5 shrink-0 text-white/80" aria-hidden />
       </motion.button>
 
-      {/* Workspace stats — all values derived from real stored files */}
+      {/* Workspace stats â€” all values derived from real stored files */}
       <div className="grid grid-cols-3 gap-2">
         {stats.map((stat, i) => {
           const Icon = stat.icon
@@ -130,7 +130,7 @@ export default memo(function Dashboard() {
               className="glass-card-hover flex w-40 flex-shrink-0 flex-col gap-2.5 p-3.5 text-left"
               aria-label={tool.title}
             >
-              <ToolIcon tool={tool} size="md" />
+              <ToolTile toolId={tool.id} size="lg" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">{tool.title}</p>
                 <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">

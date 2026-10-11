@@ -15,6 +15,7 @@ import {
   Square,
   X,
 } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
@@ -189,8 +190,9 @@ export default function ZipExport() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <FileArchive className="h-5 w-5 text-electric" />
-        <h2 className="text-lg font-semibold gradient-text">ZIP Export</h2>
+        
+        <ToolIcon toolId="zip-export" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">ZIP Export</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 safe-bottom">

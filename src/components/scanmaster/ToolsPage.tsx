@@ -6,7 +6,7 @@ import { Search, SearchX } from 'lucide-react'
 
 import { useAppStore } from '@/store/useAppStore'
 import { TOOLS, TOOL_CATEGORIES, type ToolDefinition } from '@/lib/tools'
-import { ToolRow, ToolEmptyState } from './ToolIcon'
+import { ToolRow, ToolEmptyState } from './ToolCards'
 import { useDebounce } from '@/hooks/use-debounce'
 
 /**

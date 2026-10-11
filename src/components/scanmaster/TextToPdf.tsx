@@ -6,20 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import {
-  ArrowLeft,
-  FileText,
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Download,
-  Share2,
-  Eye,
-  Loader2,
-} from 'lucide-react'
+import { ArrowLeft, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Download, Share2, Eye, Loader2 } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
@@ -138,8 +126,9 @@ ${text}
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <FileText className="h-5 w-5 text-green-400" />
-        <h2 className="text-lg font-semibold gradient-text">Text to PDF</h2>
+        
+        <ToolIcon toolId="text-to-pdf" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Text to PDF</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 safe-bottom">

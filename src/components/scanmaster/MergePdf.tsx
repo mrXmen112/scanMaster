@@ -4,19 +4,8 @@ import { useState, useCallback, useRef } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import {
-  ArrowLeft,
-  Merge,
-  Upload,
-  Download,
-  Share2,
-  X,
-  ChevronUp,
-  ChevronDown,
-  FileText,
-  Loader2,
-  GripVertical,
-} from 'lucide-react'
+import { ArrowLeft, Merge, Upload, Download, X, ChevronUp, ChevronDown, FileText, Loader2, GripVertical } from 'lucide-react'
+import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
@@ -137,8 +126,9 @@ export default function MergePdf() {
         <Button variant="ghost" size="icon" onClick={goBack} className="text-foreground hover:bg-white/10">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Merge className="h-5 w-5 text-cyan-400" />
-        <h2 className="text-lg font-semibold gradient-text">Merge PDF</h2>
+        
+        <ToolIcon toolId="merge-pdf" size="sm" />
+      <h2 className="text-lg font-semibold gradient-text">Merge PDF</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 safe-bottom">
@@ -174,7 +164,7 @@ export default function MergePdf() {
         {pdfs.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">{pdfs.length} file(s) · {formatSize(totalSize)}</Label>
+              <Label className="text-xs text-muted-foreground">{pdfs.length} file(s) Ã‚Â· {formatSize(totalSize)}</Label>
               <Button variant="ghost" size="sm" onClick={() => setPdfs([])} className="text-xs text-destructive">
                 Clear All
               </Button>
