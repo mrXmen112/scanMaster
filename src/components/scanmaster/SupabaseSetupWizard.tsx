@@ -229,6 +229,17 @@ export default function SupabaseSetupWizard() {
       const res = await fetch('/api/setup/supabase', { method: 'POST', signal: controller.signal })
       clearTimeout(timeoutId)
 
+      // 404 here means the app was built as a static export (the Android
+      // release build). Next.js API routes are not part of a static bundle,
+      // so this endpoint does not exist and no amount of retrying will help.
+      if (res.status === 404) {
+        toast.error(
+          'Setup API is not available in this build. Database setup requires the Next.js server — run `npm run dev`, not the static APK.',
+          { duration: 7000 }
+        )
+        return
+      }
+
       if (res.status === 503) {
         toast.info('Setup is still processing. Please wait a few seconds and try again.')
         return

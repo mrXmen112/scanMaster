@@ -17,6 +17,9 @@ interface AuthState {
   user: User | null
   profile: UserProfile | null
   session: Session | null
+  /** Raw JWT from the current session — what the server routes expect as a
+   *  Bearer token. Derived from `session` so it can never go stale. */
+  accessToken: string | null
   loading: boolean
   configured: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
@@ -174,6 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         profile,
         session,
+        accessToken: session?.access_token ?? null,
         loading,
         configured,
         signIn,

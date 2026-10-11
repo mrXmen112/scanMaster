@@ -33,6 +33,7 @@ import { useMounted } from '@/hooks/use-mounted'
 import { useOnlineStatus } from '@/hooks/use-online-status'
 import { useState, useEffect, memo } from 'react'
 import { getSetupStatus, getCachedSetupStatus, type SetupStatus } from '@/lib/setup-status-cache'
+import { DEV_TOOLS_ENABLED } from '@/lib/dev-tools'
 import {
   Dialog,
   DialogContent,
@@ -54,10 +55,16 @@ export default memo(function Profile() {
   const isOnline = useOnlineStatus()
   const [signingOut, setSigningOut] = useState(false)
   const [setupDialogOpen, setSetupDialogOpen] = useState(false)
-  const [dbStatus, setDbStatus] = useState<SetupStatus | null>(getCachedSetupStatus())
+  const [dbStatus, setDbStatus] = useState<SetupStatus | null>(
+    DEV_TOOLS_ENABLED ? getCachedSetupStatus() : null
+  )
 
-  // Check database setup status ONCE per app session
+  // Check database setup status ONCE per app session.
+  // Skipped in release builds: the status UI is hidden there and the endpoint
+  // is a Next.js API route that a static export does not ship, so the request
+  // would always fail while burning a network round-trip on every app launch.
   useEffect(() => {
+    if (!DEV_TOOLS_ENABLED) return
     if (!configured || hasCheckedSetupGlobally) return
     hasCheckedSetupGlobally = true
 
@@ -312,6 +319,9 @@ export default memo(function Profile() {
       )}
 
       {/* Database Setup Section — always visible so users can set up Supabase */}
+      {/* Backend — developer tooling only. The Android build is a static
+          export with no API routes, so these actions cannot run on device. */}
+      {DEV_TOOLS_ENABLED && (
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
           Backend
@@ -355,6 +365,7 @@ export default memo(function Profile() {
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </motion.button>
       </div>
+      )}
 
       {/* Settings Section */}
       <div>

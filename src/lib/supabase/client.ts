@@ -1,12 +1,16 @@
 import { createBrowserClient } from '@supabase/ssr'
 
-// Support both common env var names for the Supabase anon key.
-// NEXT_PUBLIC_SUPABASE_ANON_KEY is the standard Supabase convention.
-// NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY was used in earlier versions of this app.
+// Supabase ships two flavours of public key, both safe to expose in the bundle:
+//   - sb_publishable_...  the current "publishable key" (preferred)
+//   - eyJ...              the legacy "anon" JWT, still issued on older projects
+// Prefer the publishable key and fall back to the legacy name so existing
+// installs keep working. Neither key grants admin access — Row Level Security
+// is the only thing protecting user data, so this ordering is a
+// compatibility concern, not a security one.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   ''
 
 export function createClient() {
