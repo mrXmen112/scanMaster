@@ -27,6 +27,8 @@ export type ToolView =
   | 'ai'
   | 'profile'
   | 'auth'
+  | 'privacy-policy'
+  | 'terms-conditions'
 
 export type FileCategory = 'recent' | 'scanned' | 'edited' | 'zip' | 'favorites' | 'trash' | 'folders'
 

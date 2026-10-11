@@ -19,10 +19,12 @@ import {
   CheckCircle2,
   Wifi,
   WifiOff,
-  UserPlus,
-  LogIn,
-  Eye,
-} from 'lucide-react'
+UserPlus,
+    LogIn,
+    Eye,
+    ShieldCheck,
+    FileText,
+  } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from 'next-themes'
@@ -437,11 +439,43 @@ export default memo(function Profile() {
               <Trash2 className="h-5 w-5 text-red-400" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-foreground">Clear Cache</p>
-              <p className="text-xs text-muted-foreground">Free up storage space</p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </button>
+<p className="text-sm font-medium text-foreground">Clear Cache</p>
+             <p className="text-xs text-muted-foreground">Free up storage space</p>
+           </div>
+           <ChevronRight className="h-4 w-4 text-muted-foreground" />
+           </button>
+
+           {/* Legal — these were previously unreachable. PrivacyPolicy.tsx and
+               TermsConditions.tsx existed but were never rendered by any view,
+               so the app shipped with no privacy policy or terms link at all.
+               Play Store review and GDPR-style disclosure both expect one. */}
+           <button
+             onClick={() => setActiveView('privacy-policy')}
+             className="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition-colors"
+           >
+             <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+               <ShieldCheck className="h-5 w-5 text-primary" />
+             </div>
+             <div className="flex-1 text-left">
+               <p className="text-sm font-medium text-foreground">Privacy Policy</p>
+               <p className="text-xs text-muted-foreground">How we handle your data</p>
+             </div>
+             <ChevronRight className="h-4 w-4 text-muted-foreground" />
+           </button>
+
+           <button
+             onClick={() => setActiveView('terms-conditions')}
+             className="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition-colors"
+           >
+             <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+               <FileText className="h-5 w-5 text-primary" />
+             </div>
+             <div className="flex-1 text-left">
+               <p className="text-sm font-medium text-foreground">Terms &amp; Conditions</p>
+               <p className="text-xs text-muted-foreground">Rules for using ScanMaster</p>
+             </div>
+             <ChevronRight className="h-4 w-4 text-muted-foreground" />
+           </button>
         </div>
       </div>
 

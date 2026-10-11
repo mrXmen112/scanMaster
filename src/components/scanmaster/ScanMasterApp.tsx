@@ -31,6 +31,8 @@ const ToolsPage = dynamic(() => import('./ToolsPage'), { ssr: false, loading: ()
 const FileManager = dynamic(() => import('./FileManager'), { ssr: false, loading: () => <ViewLoader /> })
 const AiAssistant = dynamic(() => import('./AiAssistant'), { ssr: false, loading: () => <ViewLoader /> })
 const Profile = dynamic(() => import('./Profile'), { ssr: false, loading: () => <ViewLoader /> })
+const PrivacyPolicy = dynamic(() => import('./PrivacyPolicy'), { ssr: false, loading: () => <ViewLoader /> })
+const TermsConditions = dynamic(() => import('./TermsConditions'), { ssr: false, loading: () => <ViewLoader /> })
 const AuthPage = dynamic(() => import('./AuthPage'), { ssr: false, loading: () => <ViewLoader /> })
 const TextToPdf = dynamic(() => import('./TextToPdf'), { ssr: false, loading: () => <ViewLoader /> })
 const ImageToPdf = dynamic(() => import('./ImageToPdf'), { ssr: false, loading: () => <ViewLoader /> })
@@ -196,6 +198,10 @@ export default function ScanMasterApp() {
         return <HandwritingToText />
       case 'business-card-scanner':
         return <BusinessCardScanner />
+      case 'privacy-policy':
+        return <PrivacyPolicy />
+      case 'terms-conditions':
+        return <TermsConditions />
       default:
         return <Dashboard />
     }

@@ -69,12 +69,10 @@ ALTER TABLE public.feature_usage ENABLE ROW LEVEL SECURITY;
 --    updated_at). Only ownership matters for policies, so no column list is
 --    referenced here — the policies are ownership-only by design.
 -- ─────────────────────────────────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Users can read own profile"   ON public.profiles;
-DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Users can delete own profile" ON public.profiles;
--- Sweep up any policy with a name we do not control, so a permissive
--- dashboard-created policy cannot co-exist with the ones below.
+-- Drop every existing policy by enumerating pg_policies, not by a fixed list
+-- of names. A permissive policy hand-created in the dashboard would otherwise
+-- survive next to the strict ones below, which is exactly the failure that
+-- left profiles readable in the first place.
 DO $$
 DECLARE p record;
 BEGIN

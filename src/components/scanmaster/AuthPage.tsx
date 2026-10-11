@@ -242,13 +242,33 @@ export default memo(function AuthPage() {
           </div>
         </div>
 
-        {/* Security note */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-          <p className="text-[11px] text-muted-foreground">
-            Your data is encrypted and secure
+{/* Security note */}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <Shield className="h-3.5 w-3.5 text-muted-foreground" />
+            <p className="text-[11px] text-muted-foreground">
+              Your data is encrypted and secure
+            </p>
+           </div>
+
+           {/* Legal links. Consent to the terms has to be reachable from the
+               sign-up screen itself, not only from Profile after the fact —
+               this is the screen where we ask for an email address. */}
+          <p className="text-[11px] text-muted-foreground text-center mt-4">
+            By continuing you agree to our{' '}
+            <button
+              onClick={() => setActiveView('terms-conditions')}
+              className="text-primary hover:underline"
+            >
+              Terms &amp; Conditions
+            </button>{' '}
+            and{' '}
+            <button
+              onClick={() => setActiveView('privacy-policy')}
+              className="text-primary hover:underline"
+            >
+              Privacy Policy
+            </button>
           </p>
-        </div>
       </motion.div>
     </div>
   )
