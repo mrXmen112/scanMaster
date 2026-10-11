@@ -34,6 +34,11 @@ interface AuthState {
   /** Starts an OAuth (e.g. Google) flow. Redirects the browser, so the
    *  promise resolves before the user has actually authenticated. */
   signInWithOAuth: (provider: 'google') => Promise<{ error: string | null }>
+  /** Re-sends the signup confirmation email. Must use auth.resend() — the
+   *  previous version called signIn() here, which cannot send an email. */
+  resendVerification: (email: string) => Promise<{ error: string | null }>
+  /** Whether the current user's email has been confirmed. */
+  emailVerified: boolean
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
 }
@@ -248,9 +253,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo },
+        options: {
+          // Put the display name in user_metadata. The app's profile row is
+          // seeded from this, so omitting it silently lost the user's name.
+          data: { name: name || email.split('@')[0] },
+          emailRedirectTo,
+        },
       })
       if (error) return { error: toFriendlyAuthError(error).message }
+
+      // GoTrue obfuscates the response when the email already belongs to a
+      // confirmed account: it returns 200 with a user whose `identities` is
+      // empty rather than an error, to avoid leaking which emails exist.
+      // Without this check the flow falls through to "check your inbox" and
+      // the person waits forever for a confirmation that will never be sent.
+      if (data?.user && data.user.identities && data.user.identities.length === 0) {
+        return {
+          error: 'An account with this email already exists. Try signing in instead.',
+        }
+      }
 
       // GoTrue returns HTTP 200 and a user object even when "Confirm email" is
       // enabled in the dashboard — but in that case `session` is null and the
@@ -325,6 +346,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [configured])
 
+  const resendVerification = useCallback(async (email: string) => {
+    if (!configured) return { error: 'Sign-in is unavailable right now.' }
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.resend({ type: 'signup', email })
+      if (error) return { error: toFriendlyAuthError(error).message }
+      return { error: null }
+    } catch {
+      return {
+        error: 'Could not resend just now. Wait a minute and try again.',
+      }
+    }
+  }, [configured])
+
   const signOut = useCallback(async () => {
     if (!configured) return
     try {
@@ -356,6 +391,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 signIn,
     signUp,
     signInWithOAuth,
+    resendVerification,
+    emailVerified: !!session?.user?.email_confirmed_at,
         signOut,
         refreshProfile,
       }}

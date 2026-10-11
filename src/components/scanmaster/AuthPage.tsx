@@ -22,7 +22,7 @@ import { toast } from 'sonner'
 type AuthMode = 'login' | 'signup'
 
 export default memo(function AuthPage() {
-  const { signIn, signUp, signInWithOAuth, configured } = useAuth()
+  const { signIn, signUp, signInWithOAuth, resendVerification, configured } = useAuth()
   const { setActiveView } = useAppStore()
   const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
@@ -135,16 +135,19 @@ export default memo(function AuthPage() {
                 Nothing arrived? Check your spam folder, or
               </p>
               <button
-                onClick={async () => {
-                  setLoading(true)
-                  const { error: resendError } = await signIn(email.trim(), password)
-                  setLoading(false)
-                  if (resendError) {
-                    toast.info('Could not resend right now. Wait a minute and try again.')
-                  } else {
-                    toast.success('Confirmation sent again.')
-                  }
-                }}
+onClick={async () => {
+                        setLoading(true)
+                        // Must be resendVerification() — this used to call
+                        // signIn(), which cannot send an email, so the button
+                        // silently did nothing useful.
+                        const { error: resendError } = await resendVerification(confirmationSent)
+                        setLoading(false)
+                        if (resendError) {
+                          toast.info(resendError)
+                        } else {
+                          toast.success('Confirmation sent again.')
+                        }
+                      }}
                 disabled={loading}
                 className="text-sm text-primary font-medium hover:underline disabled:opacity-50"
               >
