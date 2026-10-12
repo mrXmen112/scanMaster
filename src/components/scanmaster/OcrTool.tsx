@@ -22,17 +22,9 @@ import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -144,7 +136,7 @@ export default function OcrTool() {
         pageSize: 'A4',
         margins: { top: 20, bottom: 20, left: 20, right: 20 },
       })
-      downloadFile(blob, 'ocr-extract.pdf')
+      await downloadFile(blob, 'ocr-extract.pdf')
       addFile({
         id: crypto.randomUUID(),
         name: 'ocr-extract.pdf',

@@ -23,6 +23,7 @@ import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 const LANGUAGES = [
@@ -37,15 +38,6 @@ const LANGUAGES = [
   { code: 'ja-JP', name: 'Japanese' },
   { code: 'bn-IN', name: 'Bengali' },
 ]
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 export default function SpeechToText() {
   const { goBack, setActiveView, addFile } = useAppStore()
@@ -179,7 +171,7 @@ export default function SpeechToText() {
         pageSize: 'A4',
         margins: { top: 20, bottom: 20, left: 20, right: 20 },
       })
-      downloadFile(blob, 'transcript.pdf')
+      await downloadFile(blob, 'transcript.pdf')
       addFile({
         id: crypto.randomUUID(),
         name: 'transcript.pdf',

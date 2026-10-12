@@ -8,17 +8,9 @@ import { ArrowLeft, Scissors, Upload, Download, X, FileText, Loader2, FileArchiv
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -139,9 +131,9 @@ export default function SplitPdf() {
     }
   }, [file, pageRanges, addFile, showAdAfterSuccess])
 
-  const handleDownload = useCallback(() => {
+  const handleDownload = useCallback(async () => {
     if (!resultBlob || !file) return
-    downloadFile(resultBlob, `split_${file.name.replace('.pdf', '')}.zip`)
+    await downloadFile(resultBlob, `split_${file.name.replace('.pdf', '')}.zip`)
     // Show interstitial ad after successful download
     showAdAfterSuccess()
   }, [resultBlob, file, showAdAfterSuccess])

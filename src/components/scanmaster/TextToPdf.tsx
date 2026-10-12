@@ -11,16 +11,8 @@ import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 export default function TextToPdf() {
   const { goBack, addFile } = useAppStore()
@@ -59,7 +51,7 @@ export default function TextToPdf() {
         underline,
       })
       const filename = title ? `${title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf` : 'document.pdf'
-      downloadFile(blob, filename)
+      await downloadFile(blob, filename)
       addFile({
         id: crypto.randomUUID(),
         name: filename,

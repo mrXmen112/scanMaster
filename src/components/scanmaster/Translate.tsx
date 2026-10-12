@@ -20,16 +20,8 @@ import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 const LANGUAGES = [
   { code: 'en', name: 'English' },
@@ -139,7 +131,7 @@ export default function Translate() {
         pageSize: 'A4',
         margins: { top: 50, bottom: 50, left: 50, right: 50 },
       })
-      downloadFile(blob, 'translation.pdf')
+      await downloadFile(blob, 'translation.pdf')
       addFile({
         id: crypto.randomUUID(),
         name: 'translation.pdf',

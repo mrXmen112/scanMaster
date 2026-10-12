@@ -8,16 +8,8 @@ import { ArrowLeft, Minimize2, Upload, Download, Share2, X, Loader2, FileText, G
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
-
-function downloadFile(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
-}
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -105,9 +97,9 @@ export default function CompressPdf() {
     }
   }, [file, quality, targetSize, addFile, showAdAfterSuccess])
 
-  const handleDownload = useCallback(() => {
+  const handleDownload = useCallback(async () => {
     if (!compressedResult || !file) return
-    downloadFile(compressedResult.blob, `compressed_${file.name}`)
+    await downloadFile(compressedResult.blob, `compressed_${file.name}`)
     // Show interstitial ad after successful download
     showAdAfterSuccess()
   }, [compressedResult, file, showAdAfterSuccess])

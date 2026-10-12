@@ -52,6 +52,7 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -153,15 +154,6 @@ function base64ToBytes(base64: string): Uint8Array {
   const bytes = new Uint8Array(bin.length)
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
   return bytes
-}
-
-function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
 }
 
 function cloneAnnotations(annotations: Annotation[]): Annotation[] {
@@ -1110,7 +1102,7 @@ export default function PdfEditor() {
       const editedBytes = await pdfDoc.save()
       const blob = new Blob([editedBytes.slice()], { type: 'application/pdf' })
       const filename = `edited-${file.name}`
-      downloadBlob(blob, filename)
+      await downloadFile(blob, filename)
       addFile({
         id: genId(),
         name: filename,

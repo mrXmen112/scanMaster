@@ -18,6 +18,7 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
+import { downloadFile } from '@/lib/capacitor-fs'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 interface FileItem {
@@ -121,12 +122,7 @@ export default function ZipExport() {
       }
 
       const blob = await zip.generateAsync({ type: 'blob' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'export.zip'
-      a.click()
-      setTimeout(() => URL.revokeObjectURL(url), 5000)
+      await downloadFile(blob, 'export.zip')
       addFile({
         id: crypto.randomUUID(),
         name: 'export.zip',
