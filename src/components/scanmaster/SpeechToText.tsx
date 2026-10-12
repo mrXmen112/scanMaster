@@ -22,7 +22,7 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
+import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 const LANGUAGES = [
@@ -58,101 +58,98 @@ export default function SpeechToText() {
   const [savingPdf, setSavingPdf] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
+  // Web Speech API recognition instance (live recognition, 100% client-side, offline-capable)
+  const recognitionRef = useRef<any>(null)
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop()
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop() } catch { /* already stopped */ }
+        recognitionRef.current = null
       }
     }
   }, [])
 
   const startRecording = useCallback(async () => {
+    if (loading) return
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      chunksRef.current = []
+      // Client-side live speech recognition (Offline-capable / Independent of /api routes)
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      if (!SpeechRecognition) {
+        toast.error('Speech recognition is not available on this device.')
+        return
+      }
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data)
+      // Stop any previous recognition
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop() } catch { /* already stopped */ }
+        recognitionRef.current = null
+      }
+
+      const recognition = new SpeechRecognition()
+      recognition.lang = language
+      recognition.interimResults = true
+      recognition.continuous = true
+      recognitionRef.current = recognition
+
+      recognition.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const text = event.results[i][0].transcript
+          if (event.results[i].isFinal) {
+            setTranscript((prev) => prev + text + '\n')
+          }
         }
       }
 
-      mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((track) => track.stop())
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
-        await transcribeAudio(audioBlob)
+      recognition.onerror = (event: any) => {
+        const error = event.error || 'unknown'
+        let msg = 'Failed to transcribe audio'
+        if (error === 'not-allowed') {
+          msg = 'Microphone access denied. Please allow microphone permissions.'
+        } else if (error === 'no-speech') {
+          msg = 'No speech detected. Please try again.'
+        } else if (error === 'not-available' || error === 'service-not-allowed') {
+          msg = 'Speech recognition is not available on this device.'
+        }
+        toast.error(msg)
       }
 
-      mediaRecorder.start()
+      recognition.onend = () => {
+        recognitionRef.current = null
+        setIsRecording(false)
+        setIsPaused(false)
+        setLoading(false)
+      }
+
+      recognition.start()
       setIsRecording(true)
       setIsPaused(false)
-      toast.success('Recording started')
+      setLoading(true)
+      toast.success('Listening...')
     } catch {
       toast.error('Microphone access denied. Please allow microphone permissions.')
+      setLoading(false)
     }
-  }, [])
+  }, [language, loading])
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop() } catch { /* already stopped */ }
+      recognitionRef.current = null
     }
     setIsRecording(false)
     setIsPaused(false)
+    setLoading(false)
   }, [])
 
   const togglePause = useCallback(() => {
-    if (!mediaRecorderRef.current) return
-    if (isPaused) {
-      mediaRecorderRef.current.resume()
-      setIsPaused(false)
-      toast.info('Recording resumed')
-    } else {
-      mediaRecorderRef.current.pause()
-      setIsPaused(true)
-      toast.info('Recording paused')
-    }
-  }, [isPaused])
+    // Web Speech API has no pause/resume - match the stash behaviour (stop-to-continue)
+    toast.info('Pause is not supported in live recognition. Tap the mic to stop, then start again to continue.')
+  }, [])
 
-  const transcribeAudio = useCallback(async (audioBlob: Blob) => {
-    if (loading) return
-    setLoading(true)
-    try {
-      const reader = new FileReader()
-      const base64Promise = new Promise<string>((resolve) => {
-        reader.onloadend = () => {
-          const result = reader.result as string
-          resolve(result.split(',')[1]) // remove data:audio/webm;base64, prefix
-        }
-        reader.readAsDataURL(audioBlob)
-      })
-      const audioBase64 = await base64Promise
-
-      const response = await fetchWithTimeout('/api/speech-to-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ audio: audioBase64, language }),
-      }, 15000)
-      const data: { text?: string; transcription?: string; error?: string } = await response.json()
-      const text = data.text || data.transcription || ''
-      setTranscript((prev) => (prev ? prev + '\n' + text : text))
-      toast.success('Transcription complete!')
-    } catch (err) {
-      const errMsg = (err as Error)?.message || ''
-      if (errMsg.includes('temporarily unavailable')) {
-        toast.error('AI service is temporarily unavailable. Please try again shortly.')
-      } else {
-        toast.error('Failed to transcribe audio')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [language])
+  // Live recognition writes finals directly to the transcript via onresult -
+  // no separate transcribeAudio step (no /api/speech-to-text round-trip).
 
   const handleCopy = useCallback(async () => {
     if (!transcript) return
@@ -170,22 +167,18 @@ export default function SpeechToText() {
     if (!transcript || savingPdf) return
     setSavingPdf(true)
     try {
-      const response = await fetchWithTimeout('/api/pdf/text-to-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: 'Speech Transcript',
-          text: transcript,
-          fontSize: 12,
-          alignment: 'left',
-          bold: false,
-          italic: false,
-          underline: false,
-          pageSize: 'A4',
-          margins: { top: 20, bottom: 20, left: 20, right: 20 },
-        }),
-      }, 10000)
-      const blob = await response.blob()
+      // Client-side PDF export (Offline / Independent of /api routes)
+      const blob = await generatePdfFromTextLocally({
+        title: 'Speech Transcript',
+        text: transcript,
+        fontSize: 12,
+        alignment: 'left',
+        bold: false,
+        italic: false,
+        underline: false,
+        pageSize: 'A4',
+        margins: { top: 20, bottom: 20, left: 20, right: 20 },
+      })
       downloadFile(blob, 'transcript.pdf')
       addFile({
         id: crypto.randomUUID(),

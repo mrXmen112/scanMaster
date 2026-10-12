@@ -8,17 +8,8 @@ import { ArrowLeft, Scissors, Upload, Download, X, FileText, Loader2, FileArchiv
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 function downloadFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -66,19 +57,74 @@ export default function SplitPdf() {
     }
     setLoading(true)
     try {
-      const base64 = await fileToBase64(file)
-      const response = await fetchWithTimeout('/api/pdf/split', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pdf: base64, pageRanges }),
-      }, 15000)
-      const blob = await response.blob()
-      setResultBlob(blob)
+      // Local client-side split using pdf-lib & JSZip (100% Offline / Fast)
+      const { PDFDocument } = await import('pdf-lib')
+      const JSZip = (await import('jszip')).default
+
+      const arrayBuffer = await file.arrayBuffer()
+      const sourcePdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true })
+      const totalPages = sourcePdf.getPageCount()
+
+      const parseRanges = (str: string, total: number): number[] => {
+        const pages = new Set<number>()
+        const parts = str.split(',').map((s) => s.trim())
+        for (const part of parts) {
+          if (part.includes('-')) {
+            const [sStr, eStr] = part.split('-').map((s) => s.trim())
+            const start = parseInt(sStr, 10)
+            const end = parseInt(eStr, 10)
+            if (!isNaN(start) && !isNaN(end) && start > 0 && end > 0) {
+              const cStart = Math.max(start, 1)
+              const cEnd = Math.min(end, total)
+              for (let i = cStart; i <= cEnd; i++) pages.add(i)
+            }
+          } else {
+            const p = parseInt(part, 10)
+            if (!isNaN(p) && p > 0 && p <= total) pages.add(p)
+          }
+        }
+        return Array.from(pages).sort((a, b) => a - b)
+      }
+
+      const selectedPages = parseRanges(pageRanges, totalPages)
+      if (selectedPages.length === 0) {
+        toast.error('No valid pages found in selected ranges')
+        setLoading(false)
+        return
+      }
+
+      const groups: number[][] = []
+      let currentGroup: number[] = [selectedPages[0]]
+      for (let i = 1; i < selectedPages.length; i++) {
+        if (selectedPages[i] === selectedPages[i - 1] + 1) {
+          currentGroup.push(selectedPages[i])
+        } else {
+          groups.push(currentGroup)
+          currentGroup = [selectedPages[i]]
+        }
+      }
+      groups.push(currentGroup)
+
+      const zip = new JSZip()
+      for (const group of groups) {
+        const newPdf = await PDFDocument.create()
+        const pageIndices = group.map((p) => p - 1)
+        const copiedPages = await newPdf.copyPages(sourcePdf, pageIndices)
+        copiedPages.forEach((page) => newPdf.addPage(page))
+        const newPdfBytes = await newPdf.save()
+
+        const rangeLabel = group.length === 1 ? `page_${group[0]}` : `pages_${group[0]}-${group[group.length - 1]}`
+        zip.file(`${rangeLabel}.pdf`, newPdfBytes)
+      }
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+      setResultBlob(zipBlob)
+
       addFile({
         id: crypto.randomUUID(),
         name: `split_${file.name.replace('.pdf', '')}.zip`,
         type: 'zip',
-        size: blob.size,
+        size: zipBlob.size,
         createdAt: new Date(),
         category: ['recent'],
         favorite: false,

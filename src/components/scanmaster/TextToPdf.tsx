@@ -10,7 +10,7 @@ import { ArrowLeft, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight,
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
+import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 function downloadFile(blob: Blob, filename: string) {
@@ -47,22 +47,17 @@ export default function TextToPdf() {
     }
     setLoading(true)
     try {
-      const response = await fetchWithTimeout('/api/pdf/text-to-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text,
-          title: title || undefined,
-          fontSize: fontSize[0],
-          alignment,
-          pageSize,
-          margins,
-          bold,
-          italic,
-          underline,
-        }),
-      }, 10000)
-      const blob = await response.blob()
+      const blob = await generatePdfFromTextLocally({
+        text,
+        title: title || undefined,
+        fontSize: fontSize[0],
+        alignment,
+        pageSize,
+        margins,
+        bold,
+        italic,
+        underline,
+      })
       const filename = title ? `${title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf` : 'document.pdf'
       downloadFile(blob, filename)
       addFile({

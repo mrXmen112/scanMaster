@@ -18,7 +18,6 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 interface FileItem {
@@ -102,32 +101,26 @@ export default function ZipExport() {
     }
     setLoading(true)
     try {
-      // Read uploaded files as base64
-      const uploadedFileData = await Promise.all(
-        selectedFiles.map(async (f) => {
-          const reader = new FileReader()
-          const base64 = await new Promise<string>((resolve) => {
-            reader.onloadend = () => resolve((reader.result as string).split(',')[1])
-            reader.readAsDataURL(f.file)
-          })
-          return { name: f.name, data: base64 }
-        })
-      )
+      // Client-side ZIP with JSZip (Offline / handles uploaded + stored files / Independent of /api routes)
+      const JSZip = (await import('jszip')).default
+      const zip = new JSZip()
 
-      // Get stored file data
-      const storedFileData = storedFiles
-        .filter((f) => storedSelections.has(f.id))
-        .map((f) => ({ name: f.name, data: f.dataUrl?.split(',')[1] || '' }))
-        .filter((f) => f.data)
+      // Add uploaded files (File/Blob objects)
+      for (const f of selectedFiles) {
+        zip.file(f.name, f.file)
+      }
 
-      const allFiles = [...uploadedFileData, ...storedFileData]
+      // Add stored files (base64 data URLs)
+      for (const f of storedFiles) {
+        if (storedSelections.has(f.id) && f.dataUrl) {
+          const base64 = f.dataUrl.split(',')[1]
+          if (base64) {
+            zip.file(f.name, base64, { base64: true })
+          }
+        }
+      }
 
-      const response = await fetchWithTimeout('/api/pdf/zip-export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ files: allFiles }),
-      }, 15000)
-      const blob = await response.blob()
+      const blob = await zip.generateAsync({ type: 'blob' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -147,35 +140,7 @@ export default function ZipExport() {
       // Show interstitial ad after successful export
       showAdAfterSuccess()
     } catch {
-      // Fallback: try client-side ZIP with JSZip
-      try {
-        const JSZip = (await import('jszip')).default
-        const zip = new JSZip()
-        for (const f of selectedFiles) {
-          zip.file(f.name, f.file)
-        }
-        const blob = await zip.generateAsync({ type: 'blob' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = 'export.zip'
-        a.click()
-        setTimeout(() => URL.revokeObjectURL(url), 5000)
-        addFile({
-          id: crypto.randomUUID(),
-          name: 'export.zip',
-          type: 'zip',
-          size: blob.size,
-          createdAt: new Date(),
-          category: ['recent', 'zip'],
-          favorite: false,
-        })
-        toast.success('ZIP exported successfully (client-side)!')
-        // Show interstitial ad after successful export
-        showAdAfterSuccess()
-      } catch {
-        toast.error('Failed to export ZIP')
-      }
+      toast.error('Failed to export ZIP')
     } finally {
       setLoading(false)
     }

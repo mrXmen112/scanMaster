@@ -8,17 +8,7 @@ import { ArrowLeft, Minimize2, Upload, Download, Share2, X, Loader2, FileText, G
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 function downloadFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -69,13 +59,32 @@ export default function CompressPdf() {
     }
     setLoading(true)
     try {
-      const base64 = await fileToBase64(file)
-      const response = await fetchWithTimeout('/api/pdf/compress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pdf: base64, quality, targetSize: targetSize || undefined }),
-      }, 15000)
-      const blob = await response.blob()
+      // Load and optimize PDF client-side using pdf-lib (Offline / Independent of /api routes)
+      const arrayBuffer = await file.arrayBuffer()
+      const { PDFDocument } = await import('pdf-lib')
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true })
+
+      // Strip metadata depending on compression level
+      if (quality === 'medium' || quality === 'high') {
+        pdfDoc.setTitle('')
+        pdfDoc.setAuthor('')
+        pdfDoc.setSubject('')
+        pdfDoc.setKeywords([])
+        pdfDoc.setProducer('')
+        pdfDoc.setCreator('')
+      }
+      if (quality === 'high') {
+        pdfDoc.setCreationDate(new Date(0))
+        pdfDoc.setModificationDate(new Date(0))
+      }
+
+      // Re-save applying stream compression
+      const compressedBytes = await pdfDoc.save({ useObjectStreams: true })
+
+      // Keep smaller copy (slice() gives a fresh Uint8Array<ArrayBuffer> for BlobPart typing)
+      const finalBytes = compressedBytes.length < arrayBuffer.byteLength ? compressedBytes : new Uint8Array(arrayBuffer)
+      const blob = new Blob([finalBytes.slice()], { type: 'application/pdf' })
+
       setCompressedResult({ blob, originalSize: file.size, compressedSize: blob.size })
       addFile({
         id: crypto.randomUUID(),

@@ -8,17 +8,7 @@ import { ArrowLeft, Upload, Download, Share2, X, GripVertical, ChevronUp, Chevro
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 function downloadFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -90,14 +80,63 @@ export default function ImageToPdf() {
     }
     setLoading(true)
     try {
-      const base64Images = await Promise.all(images.map((img) => fileToBase64(img.file)))
-      const response = await fetchWithTimeout('/api/pdf/image-to-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: base64Images, quality }),
-      }, 15000)
-      // fetchWithTimeout throws on !ok
-      const blob = await response.blob()
+      // Local client-side PDF generation using jsPDF (Offline / Reliable / Avoid API routes)
+      const { jsPDF } = await import('jspdf')
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4',
+      })
+
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+
+      for (let i = 0; i < images.length; i++) {
+        const imgItem = images[i]
+
+        if (i > 0) {
+          pdf.addPage()
+        }
+
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(imgItem.file)
+        })
+
+        const imgAspect = await new Promise<number>((resolve) => {
+          const img = new Image()
+          img.onload = () => resolve(img.width / img.height)
+          img.onerror = () => resolve(pageWidth / pageHeight)
+          img.src = dataUrl
+        })
+
+        let destW = pageWidth
+        let destH = pageWidth / imgAspect
+
+        if (destH > pageHeight) {
+          destH = pageHeight
+          destW = pageHeight * imgAspect
+        }
+
+        const x = (pageWidth - destW) / 2
+        const y = (pageHeight - destH) / 2
+
+        const format = imgItem.file.type === 'image/png' ? 'PNG' : 'JPEG'
+        pdf.addImage(
+          dataUrl,
+          format,
+          x,
+          y,
+          destW,
+          destH,
+          undefined,
+          quality === 'high' ? 'FAST' : quality === 'medium' ? 'MEDIUM' : 'SLOW'
+        )
+      }
+
+      const blob = pdf.output('blob')
       downloadFile(blob, 'images.pdf')
       addFile({
         id: crypto.randomUUID(),

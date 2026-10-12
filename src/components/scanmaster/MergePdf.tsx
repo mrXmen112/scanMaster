@@ -8,17 +8,8 @@ import { ArrowLeft, Merge, Upload, Download, X, ChevronUp, ChevronDown, FileText
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 function downloadFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -90,14 +81,22 @@ export default function MergePdf() {
     }
     setLoading(true)
     try {
-      const base64Pdfs = await Promise.all(pdfs.map((p) => fileToBase64(p.file)))
-      const response = await fetchWithTimeout('/api/pdf/merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pdfs: base64Pdfs }),
-      }, 15000)
-      const blob = await response.blob()
-      downloadFile(blob, outputName)
+      // Local client-side merge using pdf-lib (Offline / Robust / Independent of APIs)
+      const { PDFDocument } = await import('pdf-lib')
+      const mergedPdf = await PDFDocument.create()
+
+      for (const item of pdfs) {
+        const buffer = await item.file.arrayBuffer()
+        const pdf = await PDFDocument.load(buffer, { ignoreEncryption: true })
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices())
+        copiedPages.forEach((page) => mergedPdf.addPage(page))
+      }
+
+      const mergedBytes = await mergedPdf.save()
+      const blob = new Blob([mergedBytes.slice()], { type: 'application/pdf' })
+
+      const filename = outputName.endsWith('.pdf') ? outputName : `${outputName}.pdf`
+      downloadFile(blob, filename)
       addFile({
         id: crypto.randomUUID(),
         name: outputName,
