@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, User, Sparkles, BookOpen, PenLine, CheckCircle, Languages, Briefcase, WifiOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fetchWithTimeout, isServiceUnavailableError } from '@/lib/fetch-with-timeout'
+import { buildApiUrl } from '@/lib/api-base-url'
 
 interface Message {
   id: string
@@ -49,7 +50,7 @@ export default function AiAssistant() {
     setIsLoading(true)
 
     try {
-      const response = await fetchWithTimeout('/api/ai-chat', {
+      const response = await fetchWithTimeout(buildApiUrl('/api/ai-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text.trim(), history: messages.filter(m => m.role !== 'system') }),

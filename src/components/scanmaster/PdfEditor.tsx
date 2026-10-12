@@ -52,7 +52,6 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -149,13 +148,11 @@ function genId(): string {
   return crypto.randomUUID()
 }
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+function base64ToBytes(base64: string): Uint8Array {
+  const bin = atob(base64)
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+  return bytes
 }
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -908,7 +905,39 @@ export default function PdfEditor() {
     if (!file) return
     setSaving(true)
     try {
-      const base64 = await fileToBase64(file)
+      // Client-side PDF edit using pdf-lib (Offline / Independent of /api routes)
+      const { PDFDocument, rgb, StandardFonts, degrees } = await import('pdf-lib')
+      const arrayBuffer = await file.arrayBuffer()
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true })
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+      const hexToRgb = (hexColor: string) => {
+        const hex = hexColor.replace('#', '')
+        const r = parseInt(hex.substring(0, 2), 16) / 255
+        const g = parseInt(hex.substring(2, 4), 16) / 255
+        const b = parseInt(hex.substring(4, 6), 16) / 255
+        return rgb(r, g, b)
+      }
+
+      const embedImageFromDataUrl = async (dataUrl: string) => {
+        if (!dataUrl || typeof dataUrl !== 'string') return null
+        try {
+          const commaIdx = dataUrl.indexOf(',')
+          if (commaIdx === -1) return null
+          const imageBytes = base64ToBytes(dataUrl.substring(commaIdx + 1))
+          try {
+            return await pdfDoc.embedPng(imageBytes)
+          } catch {
+            try {
+              return await pdfDoc.embedJpg(imageBytes)
+            } catch {
+              return null
+            }
+          }
+        } catch {
+          return null
+        }
+      }
 
       // Prepare annotations for backend, converting percentage-based coords
       const payloadAnnotations = annotations.map((ann) => {
@@ -979,17 +1008,107 @@ export default function PdfEditor() {
         return ann
       })
 
-      const response = await fetchWithTimeout('/api/pdf/editor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          file: base64,
-          annotations: payloadAnnotations,
-          pageRotations: pages.map((p) => p.rotation),
-          deletedPages: [],
-        }),
-      }, 15000)
-      const blob = await response.blob()
+      // Apply page rotations
+      const pageRotations = pages.map((p) => p.rotation)
+      for (let i = 0; i < Math.min(pageRotations.length, pdfDoc.getPageCount()); i++) {
+        if (pageRotations[i] && pageRotations[i] !== 0) {
+          const page = pdfDoc.getPage(i)
+          page.setRotation(degrees(pageRotations[i]))
+        }
+      }
+
+      // Apply annotations (ported from /api/pdf/editor route)
+      for (const annotation of payloadAnnotations) {
+        const { type, page: pageNum } = annotation as any
+        if (pageNum < 0 || pageNum >= pdfDoc.getPageCount()) continue
+        const page = pdfDoc.getPage(pageNum)
+        const pageHeight = page.getHeight()
+        const pageWidth = page.getWidth()
+
+        try {
+          if (type === 'text') {
+            const { x, y, content, fontSize: textFontSize, color } = annotation as any
+            const fs = textFontSize || 16
+            page.drawText(content, {
+              x: (x / 100) * pageWidth,
+              y: pageHeight - (y / 100) * pageHeight,
+              size: fs,
+              font,
+              color: color ? hexToRgb(color) : rgb(0, 0, 0),
+            })
+          } else if (type === 'highlight') {
+            const { x, y, w, h, color } = annotation as any
+            page.drawRectangle({
+              x: (x / 100) * pageWidth,
+              y: pageHeight - (y / 100) * pageHeight - ((h || 4) / 100) * pageHeight,
+              width: ((w || 80) / 100) * pageWidth,
+              height: ((h || 4) / 100) * pageHeight,
+              color: color ? hexToRgb(color) : rgb(1, 1, 0),
+              opacity: 0.3,
+            })
+          } else if (type === 'drawing') {
+            const { points, color, width } = annotation as any
+            if (!Array.isArray(points) || points.length < 2) continue
+            const drawColor = color ? hexToRgb(color) : rgb(0, 0, 0)
+            const lineWidth = Math.max(width || 2, 0.5)
+            for (let i = 0; i < points.length - 1; i++) {
+              page.drawLine({
+                start: { x: (points[i].x / 100) * pageWidth, y: pageHeight - (points[i].y / 100) * pageHeight },
+                end: { x: (points[i + 1].x / 100) * pageWidth, y: pageHeight - (points[i + 1].y / 100) * pageHeight },
+                thickness: lineWidth,
+                color: drawColor,
+              })
+            }
+          } else if (type === 'shape') {
+            const { shapeType, x, y, w, h, color, strokeWidth: sw } = annotation as any
+            const shapeX = (x / 100) * pageWidth
+            const shapeY = pageHeight - (y / 100) * pageHeight - ((h || 10) / 100) * pageHeight
+            const shapeW = ((w || 20) / 100) * pageWidth
+            const shapeH = ((h || 10) / 100) * pageHeight
+            const shapeColor = color ? hexToRgb(color) : rgb(0, 0, 0)
+            const shapeLineWidth = Math.max(sw || 2, 0.5)
+            if (shapeType === 'rectangle') {
+              page.drawRectangle({
+                x: shapeX, y: shapeY, width: shapeW, height: shapeH,
+                borderColor: shapeColor, borderWidth: shapeLineWidth,
+                color: rgb(0, 0, 0), opacity: 0, borderOpacity: 1,
+              })
+            } else if (shapeType === 'circle') {
+              page.drawEllipse({
+                x: shapeX + shapeW / 2, y: shapeY + shapeH / 2,
+                xScale: shapeW / 2, yScale: shapeH / 2,
+                borderColor: shapeColor, borderWidth: shapeLineWidth,
+                color: rgb(0, 0, 0), opacity: 0, borderOpacity: 1,
+              })
+            } else if (shapeType === 'line') {
+              page.drawLine({
+                start: { x: shapeX, y: shapeY + shapeH },
+                end: { x: shapeX + shapeW, y: shapeY },
+                thickness: shapeLineWidth, color: shapeColor,
+              })
+            }
+          } else if (type === 'signature' || type === 'imageStamp') {
+            const { x, y, dataUrl, scale } = annotation as any
+            const img = await embedImageFromDataUrl(dataUrl)
+            if (img) {
+              const imgScale = scale || 1
+              const imgWidth = pageWidth * 0.25 * imgScale
+              const imgHeight = (img.height / img.width) * imgWidth
+              page.drawImage(img, {
+                x: (x / 100) * pageWidth,
+                y: pageHeight - (y / 100) * pageHeight - imgHeight,
+                width: imgWidth,
+                height: imgHeight,
+              })
+            }
+          }
+        } catch {
+          // Skip annotations that fail to render, keep the rest
+        }
+      }
+
+      const editedBytes = await pdfDoc.save()
+      const blob = new Blob([editedBytes.slice()], { type: 'application/pdf' })
       const filename = `edited-${file.name}`
       downloadBlob(blob, filename)
       addFile({

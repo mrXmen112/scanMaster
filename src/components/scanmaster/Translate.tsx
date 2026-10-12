@@ -19,6 +19,7 @@ import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
+import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
 function downloadFile(blob: Blob, filename: string) {
@@ -63,17 +64,34 @@ export default function Translate() {
     setLoading(true)
     setTranslatedText('')
     try {
-      const response = await fetchWithTimeout('/api/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: inputText,
-          sourceLanguage: LANGUAGES.find((l) => l.code === sourceLang)?.name || sourceLang,
-          targetLanguage: LANGUAGES.find((l) => l.code === targetLang)?.name || targetLang,
-        }),
-      }, 15000)
-      const data: { translatedText?: string; translation?: string; error?: string } = await response.json()
-      setTranslatedText(data.translatedText || data.translation || '')
+      // Client-side translation via MyMemory free API (no key / CORS-open / Independent of /api routes)
+      // MyMemory caps query length, so chunk long text at sentence boundaries.
+      const chunks: string[] = []
+      if (inputText.length > 450) {
+        const sentences = inputText.match(/[^.!?]+[.!?]+["']?\s*|[^.!?]+$/g) || [inputText]
+        let cur = ''
+        for (const s of sentences) {
+          if ((cur + s).length > 450 && cur) { chunks.push(cur.trim()); cur = s }
+          else cur += s
+        }
+        if (cur.trim()) chunks.push(cur.trim())
+      } else {
+        chunks.push(inputText)
+      }
+
+      const parts: string[] = []
+      for (const chunk of chunks) {
+        const params = new URLSearchParams({ q: chunk, langpair: `${sourceLang}|${targetLang}` })
+        const res = await fetchWithTimeout(`https://api.mymemory.translated.net/get?${params.toString()}`, {
+          method: 'GET',
+        }, 15000)
+        const data: { responseData?: { translatedText?: string }; responseStatus?: number; responseDetails?: string } = await res.json()
+        if (data.responseStatus !== 200 || !data.responseData?.translatedText) {
+          throw new Error(data.responseDetails || 'Translation failed')
+        }
+        parts.push(data.responseData.translatedText)
+      }
+      setTranslatedText(parts.join(' '))
       toast.success('Translation complete!')
     } catch (err) {
       const errMsg = (err as Error)?.message || ''
@@ -112,19 +130,15 @@ export default function Translate() {
     try {
       const sourceName = LANGUAGES.find((l) => l.code === sourceLang)?.name
       const targetName = LANGUAGES.find((l) => l.code === targetLang)?.name
-      const response = await fetchWithTimeout('/api/pdf/text-to-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: `Translation: ${sourceName} â†’ ${targetName}`,
-          text: translatedText,
-          fontSize: 12,
-          alignment: 'left',
-          pageSize: 'A4',
-          margins: { top: 50, bottom: 50, left: 50, right: 50 },
-        }),
-      }, 10000)
-      const blob = await response.blob()
+      // Client-side PDF export (Offline / Independent of /api routes)
+      const blob = await generatePdfFromTextLocally({
+        title: `Translation: ${sourceName} → ${targetName}`,
+        text: translatedText,
+        fontSize: 12,
+        alignment: 'left',
+        pageSize: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 },
+      })
       downloadFile(blob, 'translation.pdf')
       addFile({
         id: crypto.randomUUID(),

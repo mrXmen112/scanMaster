@@ -21,17 +21,9 @@ import {
 import { ToolIcon } from './ToolCards'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { fetchWithTimeout } from '@/lib/fetch-with-timeout'
+import { generatePdfFromTextLocally } from '@/lib/pdf-generator'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 function downloadFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -93,17 +85,25 @@ export default function OcrTool() {
       toast.error('Please upload a file first')
       return
     }
+    // Scanned-PDF OCR needs a PDF renderer (online service); image OCR runs fully on-device.
+    if (file.type === 'application/pdf') {
+      toast.error('PDF OCR needs the online service. Please upload an image (JPG/PNG) instead.')
+      return
+    }
     setLoading(true)
     try {
-      const base64 = await fileToBase64(file)
-      const response = await fetchWithTimeout('/api/ocr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64 }),
-      }, 15000)
-      const data: { text?: string; error?: string } = await response.json()
-      setExtractedText(data.text || '')
-      toast.success('Text extracted successfully!')
+      // Client-side OCR with tesseract.js (no server / no API key / works in APK)
+      const { createWorker } = await import('tesseract.js')
+      const worker = await createWorker('eng')
+      const { data: { text } } = await worker.recognize(file)
+      await worker.terminate()
+      const clean = (text || '').trim()
+      setExtractedText(clean)
+      if (clean) {
+        toast.success('Text extracted successfully!')
+      } else {
+        toast.info('No text found in the image')
+      }
     } catch (err) {
       const errMsg = (err as Error)?.message || ''
       if (errMsg.includes('temporarily unavailable')) {
@@ -132,22 +132,18 @@ export default function OcrTool() {
     if (!extractedText || savingPdf) return
     setSavingPdf(true)
     try {
-      const response = await fetchWithTimeout('/api/pdf/text-to-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: 'OCR Extract',
-          text: extractedText,
-          fontSize: 12,
-          alignment: 'left',
-          bold: false,
-          italic: false,
-          underline: false,
-          pageSize: 'A4',
-          margins: { top: 20, bottom: 20, left: 20, right: 20 },
-        }),
-      }, 10000)
-      const blob = await response.blob()
+      // Client-side PDF export (Offline / Independent of /api routes)
+      const blob = await generatePdfFromTextLocally({
+        title: 'OCR Extract',
+        text: extractedText,
+        fontSize: 12,
+        alignment: 'left',
+        bold: false,
+        italic: false,
+        underline: false,
+        pageSize: 'A4',
+        margins: { top: 20, bottom: 20, left: 20, right: 20 },
+      })
       downloadFile(blob, 'ocr-extract.pdf')
       addFile({
         id: crypto.randomUUID(),

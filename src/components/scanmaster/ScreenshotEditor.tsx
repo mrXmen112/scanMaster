@@ -8,6 +8,7 @@ import { ToolIcon } from './ToolCards'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { pickImages, downloadFile, shareFile } from '@/lib/capacitor-fs'
+import { buildApiUrl } from '@/lib/api-base-url'
 import { useInterstitialAd } from '@/hooks/use-interstitial-ad'
 import { incrementUsage, isLimitReached, shouldWatermark, grantBonusUse } from '@/lib/usage-tracker'
 import { applyImageWatermark } from '@/lib/watermark'
@@ -382,7 +383,7 @@ export default function ScreenshotEditor() {
         tempCtx.putImageData(regionData, 0, 0)
         const regionBase64 = tempCanvas.toDataURL('image/jpeg', 0.8)
 
-        const res = await fetch('/api/ai/text-erase', {
+        const res = await fetch(buildApiUrl('/api/ai/text-erase'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: regionBase64, region: { x, y, w, h } })
